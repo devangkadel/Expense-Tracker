@@ -46,11 +46,19 @@ body { background: var(--bg); color: var(--ink); font-family: var(--font-ui); fo
 header.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 20px; }
 h1 { margin: 0; font-size: 1.75rem; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance; }
 .sub { margin: 2px 0 0; color: var(--muted); }
+.tools { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
 .monthnav { display: flex; align-items: center; gap: 6px; }
 .monthnav .label { min-width: 9.5em; text-align: center; font-weight: 600; }
 .iconbtn { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; font-size: 1rem; line-height: 1; }
 .iconbtn:hover { border-color: var(--accent); }
-select.cur { height: 34px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); padding: 0 8px; font: inherit; }
+.curwrap { position: relative; display: inline-flex; align-items: center; height: 34px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
+.curwrap:hover { border-color: var(--accent); }
+.curwrap:focus-within { outline: 2px solid var(--accent); outline-offset: 1px; }
+.curwrap label { padding-left: 10px; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; white-space: nowrap; cursor: pointer; }
+select.cur { appearance: none; -webkit-appearance: none; height: 100%; border: 0; border-radius: 8px; background: transparent; color: var(--ink); padding: 0 30px 0 8px; font: inherit; font-size: 0.9rem; font-weight: 600; line-height: normal; cursor: pointer; }
+select.cur:focus-visible { outline: none; }
+select.cur option { background: var(--panel); color: var(--ink); }
+.curwrap::after { content: ""; position: absolute; right: 12px; top: 50%; width: 6px; height: 6px; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: translateY(-70%) rotate(45deg); pointer-events: none; }
 
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 18px 20px; min-width: 0; }
 .card h2 { margin: 0 0 2px; font-size: 1rem; font-weight: 600; }
@@ -68,9 +76,13 @@ form.entry { display: grid; grid-template-columns: 9.5rem minmax(0, 1.6fr) minma
 .btn { height: 40px; padding: 0 18px; border-radius: 8px; border: 1px solid var(--accent); background: var(--accent); color: var(--panel); font: inherit; font-weight: 600; cursor: pointer; white-space: nowrap; }
 .btn:hover { filter: brightness(1.08); }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn.secondary { background: transparent; color: var(--ink); border-color: var(--line); }
+.btn.secondary:hover { border-color: var(--accent); filter: none; }
+.actions { display: flex; gap: 8px; }
+.card.is-editing { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
 .formmsg { grid-column: 1 / -1; margin: 0; font-size: 0.85rem; min-height: 1.3em; color: var(--muted); }
 .formmsg.err { color: var(--bad); }
-@media (max-width: 860px) { form.entry { grid-template-columns: 1fr 1fr; } .fld.desc { grid-column: 1 / -1; } .btn { grid-column: 1 / -1; } }
+@media (max-width: 860px) { form.entry { grid-template-columns: 1fr 1fr; } .fld.desc { grid-column: 1 / -1; } .actions { grid-column: 1 / -1; } .actions .btn { flex: 1; } }
 
 /* summary */
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
@@ -112,6 +124,19 @@ td.r, th.r { text-align: right; }
 .del { border: 1px solid transparent; background: none; color: var(--muted); cursor: pointer; border-radius: 6px; padding: 3px 8px; font: inherit; font-size: 0.8rem; }
 .del:hover { color: var(--bad); border-color: var(--line); }
 .del.arm { color: var(--panel); background: var(--bad); }
+.rowact { display: inline-flex; align-items: center; gap: 2px; }
+.ico { width: 30px; height: 30px; display: inline-grid; place-items: center; border: 1px solid transparent; border-radius: 6px; background: none; color: var(--muted); cursor: pointer; padding: 0; }
+.ico:hover { color: var(--accent); border-color: var(--line); }
+.ico svg { width: 15px; height: 15px; }
+tr.editing td { background: var(--accent-soft); }
+.daytag { color: var(--muted); }
+.exp { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.ghost { height: 32px; padding: 0 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--ink); font: inherit; font-size: 0.85rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.ghost:hover { border-color: var(--accent); color: var(--accent); }
+.ghost:disabled { opacity: .5; cursor: not-allowed; color: var(--ink); border-color: var(--line); }
+.ghost svg { width: 14px; height: 14px; }
+.expmsg { font-size: 0.82rem; color: var(--muted); }
+.expmsg.err { color: var(--bad); }
 .empty { color: var(--muted); padding: 24px 4px; text-align: center; }
 .tabhead { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px; }
 .linkbtn { border: none; background: none; color: var(--accent); cursor: pointer; font: inherit; font-size: 0.85rem; padding: 0; text-decoration: underline; text-underline-offset: 2px; }
@@ -124,30 +149,38 @@ td.r, th.r { text-align: right; }
       <h1>Monthly Expense Ledger</h1>
       <p class="sub" id="takeaway">Loading your expenses…</p>
     </div>
-    <div class="monthnav">
-      <button class="iconbtn" id="prev" aria-label="Previous month">‹</button>
-      <div class="label" id="monthLabel">—</div>
-      <button class="iconbtn" id="next" aria-label="Next month">›</button>
-      <select class="cur" id="cur" aria-label="Currency">
-        <option value="€">€ EUR</option>
-        <option value="$">$ USD</option>
-        <option value="£">£ GBP</option>
-        <option value="₹">₹ INR</option>
-      </select>
+    <div class="tools">
+      <div class="monthnav">
+        <button class="iconbtn" id="prev" aria-label="Previous month">‹</button>
+        <div class="label" id="monthLabel">—</div>
+        <button class="iconbtn" id="next" aria-label="Next month">›</button>
+      </div>
+      <div class="curwrap">
+        <label for="cur">Currency</label>
+        <select class="cur" id="cur">
+          <option value="€">€ EUR</option>
+          <option value="$">$ USD</option>
+          <option value="£">£ GBP</option>
+          <option value="₹">₹ INR</option>
+        </select>
+      </div>
     </div>
   </header>
 
   <div class="banner" id="banner" hidden></div>
 
-  <section class="card" aria-labelledby="addTitle">
+  <section class="card" id="entryCard" aria-labelledby="addTitle">
     <h2 id="addTitle">Add an expense</h2>
-    <p class="note">Entries are saved to this page and sorted into the month of their date.</p>
+    <p class="note" id="formNote">Entries are saved to this page and sorted into the month of their date.</p>
     <form class="entry" id="form" novalidate>
       <div class="fld"><label for="fDate">Date</label><input id="fDate" type="date" required></div>
       <div class="fld desc"><label for="fDesc">Description</label><input id="fDesc" type="text" maxlength="80" placeholder="e.g. Weekly groceries" required></div>
       <div class="fld"><label for="fCat">Category</label><select id="fCat"></select></div>
       <div class="fld amt"><label for="fAmt">Amount</label><span id="curSym">€</span><input id="fAmt" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="0.00" required></div>
-      <button class="btn" id="addBtn" type="submit" disabled>Add expense</button>
+      <div class="actions">
+        <button class="btn" id="addBtn" type="submit" disabled>Add expense</button>
+        <button class="btn secondary" id="cancelEdit" type="button" hidden>Cancel</button>
+      </div>
       <p class="formmsg" id="formMsg" aria-live="polite"></p>
     </form>
   </section>
@@ -178,9 +211,16 @@ td.r, th.r { text-align: right; }
   <section class="card" aria-labelledby="tbTitle">
     <div class="tabhead">
       <h2 id="tbTitle">Line items</h2>
-      <button class="linkbtn" id="clearEx" type="button" hidden>Remove example entries</button>
+      <div class="exp">
+        <button class="linkbtn" id="clearEx" type="button" hidden>Remove example entries</button>
+        <span class="exp" id="expGroup" hidden>
+          <button class="ghost" id="expPdf" type="button"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8m0 0-3-3m3 3 3-3M3 13h10"/></svg>Download PDF</button>
+          <button class="ghost" id="expXlsx" type="button"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8m0 0-3-3m3 3 3-3M3 13h10"/></svg>Download Excel</button>
+        </span>
+      </div>
     </div>
-    <p class="note" id="tbNote">Every expense recorded for the month, newest first.</p>
+    <p class="note" id="tbNote">Every expense recorded for the month, newest first. Downloads include every month, not only the one shown.</p>
+    <p class="expmsg" id="expMsg" aria-live="polite" hidden></p>
     <div class="tablebox">
       <table>
         <thead><tr><th>Date</th><th>Description</th><th>Category</th><th class="r">Amount</th><th class="r"><span class="sr" aria-hidden="true"></span></th></tr></thead>
@@ -222,6 +262,49 @@ td.r, th.r { text-align: right; }
 
   function msg(text, err) { const m = $("formMsg"); m.textContent = text; m.classList.toggle("err", !!err); }
 
+  const parseISO = (iso) => { const [y, mo, da] = iso.split("-").map(Number); return new Date(y, mo - 1, da); };
+  const fmtDay = (iso) => parseISO(iso).toLocaleString("en", { weekday: "short", month: "short", day: "numeric" });
+  const fmtLong = (iso) => parseISO(iso).toLocaleString("en", { weekday: "short", day: "numeric", month: "short", year: "numeric" });
+
+  let editing = null;
+  const ADD_NOTE = "Entries are saved to this page and sorted into the month of their date.";
+
+  function startEdit(id) {
+    const e = all.find((x) => x.id === id);
+    if (!e) return;
+    editing = id;
+    const sel = $("fCat");
+    if (![...sel.options].some((o) => o.value === e.category)) sel.append(new Option(e.category, e.category));
+    $("fDate").value = e.date;
+    $("fDesc").value = e.desc || "";
+    sel.value = e.category;
+    $("fAmt").value = Number(e.amount).toFixed(2);
+    $("addTitle").textContent = "Edit expense";
+    $("formNote").textContent = `Editing "${e.desc}" from ${fmtLong(e.date)}. Save to update it, or cancel to leave it unchanged.`;
+    $("addBtn").textContent = "Save changes";
+    $("cancelEdit").hidden = false;
+    $("entryCard").classList.add("is-editing");
+    msg("");
+    const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    $("entryCard").scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "start" });
+    $("fDesc").focus({ preventScroll: true });
+    render();
+  }
+
+  function endEdit() {
+    editing = null;
+    $("addTitle").textContent = "Add an expense";
+    $("formNote").textContent = ADD_NOTE;
+    $("addBtn").textContent = "Add expense";
+    $("cancelEdit").hidden = true;
+    $("entryCard").classList.remove("is-editing");
+    $("fDesc").value = ""; $("fAmt").value = ""; $("fDate").value = todayISO;
+    render();
+  }
+
+  $("cancelEdit").addEventListener("click", () => { endEdit(); msg(""); });
+  $("form").addEventListener("keydown", (ev) => { if (ev.key === "Escape" && editing) { endEdit(); msg(""); } });
+
   $("form").addEventListener("submit", async (ev) => {
     ev.preventDefault();
     if (!db) return;
@@ -231,18 +314,29 @@ td.r, th.r { text-align: right; }
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return msg("Pick a date for this expense.", true);
     if (!desc) return msg("Add a short description so you can recognise it later.", true);
     if (!(amount > 0)) return msg("Enter an amount greater than zero.", true);
+    const fields = { date, month: date.slice(0, 7), desc, category: $("fCat").value, amount };
     $("addBtn").disabled = true;
+    const id = editing;
     try {
-      await db.collection("expenses").add({ date, month: date.slice(0, 7), desc, category: $("fCat").value, amount, createdAt: Date.now() });
-      msg(`Added ${money(amount)} for ${desc}.`);
-      $("fDesc").value = ""; $("fAmt").value = ""; $("fDesc").focus();
-      if (date.slice(0, 7) !== month) { month = date.slice(0, 7); render(); }
+      if (id) {
+        await db.doc("expenses/" + id).update({ ...fields, updatedAt: Date.now() });
+        endEdit();
+        msg(`Updated ${desc}: ${money(amount)} on ${fmtLong(date)}.`);
+      } else {
+        await db.collection("expenses").add({ ...fields, createdAt: Date.now() });
+        msg(`Added ${money(amount)} for ${desc}.`);
+        $("fDesc").value = ""; $("fAmt").value = ""; $("fDesc").focus();
+      }
+      if (fields.month !== month) { month = fields.month; render(); }
     } catch (e) {
-      msg(e && e.code === "quota_exceeded" ? "Storage is full. Remove some old entries and try again." : "Couldn't save that expense. Check your connection and try again.", true);
+      if (id && e && e.code === "invalid_argument") { endEdit(); msg("That expense no longer exists, so it couldn't be updated.", true); }
+      else msg(e && e.code === "quota_exceeded" ? "Storage is full. Remove some old entries and try again." : "Couldn't save that expense. Check your connection and try again.", true);
     } finally { $("addBtn").disabled = false; }
   });
 
   $("rows").addEventListener("click", async (ev) => {
+    const ed = ev.target.closest("button.edit");
+    if (ed) { startEdit(ed.dataset.id); return; }
     const b = ev.target.closest("button.del");
     if (!b || !db) return;
     if (!b.classList.contains("arm")) {
@@ -344,13 +438,21 @@ td.r, th.r { text-align: right; }
     }
     items.forEach((e) => {
       const tr = document.createElement("tr");
+      if (e.id === editing) tr.className = "editing";
       const d = document.createElement("td"); d.className = "num"; d.style.whiteSpace = "nowrap";
-      const [y, mo, da] = e.date.split("-").map(Number); d.textContent = new Date(y, mo - 1, da).toLocaleString("en", { month: "short", day: "numeric" });
+      const dt = parseISO(e.date);
+      const wd = document.createElement("span"); wd.className = "daytag"; wd.textContent = dt.toLocaleString("en", { weekday: "short" }) + ", ";
+      d.append(wd, document.createTextNode(dt.toLocaleString("en", { month: "short", day: "numeric" })));
       const ds = document.createElement("td"); ds.textContent = e.desc || "";
       if (e.example) { const t = document.createElement("span"); t.className = "tag"; t.textContent = "example"; ds.append(t); }
       const c = document.createElement("td"); const chip = document.createElement("span"); chip.className = "chip"; const sw = document.createElement("span"); sw.className = "sw"; sw.style.background = color(e.category); chip.append(sw, document.createTextNode(e.category)); c.append(chip);
       const a = document.createElement("td"); a.className = "r num"; a.textContent = money(e.amount);
-      const x = document.createElement("td"); x.className = "r"; const b = document.createElement("button"); b.className = "del"; b.type = "button"; b.dataset.id = e.id; b.textContent = "Remove"; b.setAttribute("aria-label", `Remove ${e.desc}`); x.append(b);
+      const x = document.createElement("td"); x.className = "r"; x.style.whiteSpace = "nowrap";
+      const wrap = document.createElement("span"); wrap.className = "rowact";
+      const ed = document.createElement("button"); ed.className = "ico edit"; ed.type = "button"; ed.dataset.id = e.id; ed.title = "Edit"; ed.setAttribute("aria-label", `Edit ${e.desc}`);
+      ed.innerHTML = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.8 2.7a1.6 1.6 0 0 1 2.3 2.3L5.5 12.6 2.5 13.5l.9-3z"/><path d="M9.6 3.9l2.5 2.5"/></svg>';
+      const b = document.createElement("button"); b.className = "del"; b.type = "button"; b.dataset.id = e.id; b.textContent = "Remove"; b.setAttribute("aria-label", `Remove ${e.desc}`);
+      wrap.append(ed, b); x.append(wrap);
       tr.append(d, ds, c, a, x); tb.append(tr);
     });
   }
@@ -395,9 +497,199 @@ td.r, th.r { text-align: right; }
     renderTrend();
     renderTable(items);
     $("clearEx").hidden = !all.some((e) => e.example);
+    $("expPdf").disabled = $("expXlsx").disabled = !all.length || exporting;
   }
 
+  /* ---------- export ---------- */
+  const LIBS = {
+    xlsx: ["https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js", "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"],
+    jspdf: ["https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js", "https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"],
+    autotable: ["https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js", "https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"],
+  };
+  const libLoads = {};
+  const loadOne = (src) => new Promise((res, rej) => {
+    const s = document.createElement("script");
+    s.src = src; s.onload = res;
+    s.onerror = () => { s.remove(); rej(new Error("lib")); };
+    document.head.append(s);
+  });
+  const load = (srcs) => {
+    const key = srcs[0];
+    if (!libLoads[key]) {
+      libLoads[key] = srcs.reduce((p, src) => p.catch(() => loadOne(src)), Promise.reject(new Error("lib")))
+        .catch((e) => { delete libLoads[key]; throw e; });
+    }
+    return libLoads[key];
+  };
+  const CODES = { "€": "EUR", "$": "USD", "£": "GBP", "₹": "INR" };
+  let downloads = null;
+  let exporting = false;
+
+  function expMsg(text, err) { const m = $("expMsg"); m.hidden = !text; m.textContent = text || ""; m.classList.toggle("err", !!err); }
+
+  function exportData() {
+    const rows = all.slice().sort((a, b) => a.date.localeCompare(b.date) || ((a.createdAt || 0) - (b.createdAt || 0)));
+    const months = [...new Set(rows.map((e) => e.month))].sort();
+    const byMonth = months.map((m) => { const it = rows.filter((e) => e.month === m); return { month: m, items: it, count: it.length, total: sum(it) }; });
+    const catMap = {};
+    rows.forEach((e) => { const c = catMap[e.category] || (catMap[e.category] = { cat: e.category, count: 0, total: 0 }); c.count++; c.total += Number(e.amount) || 0; });
+    const cats = Object.values(catMap).sort((a, b) => b.total - a.total);
+    return { rows, byMonth, cats, total: sum(rows) };
+  }
+  const stamp = () => todayISO;
+  const n2 = (v) => Number(v).toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  async function save(filename, blob) {
+    try {
+      await downloads.save({ filename, data: blob });
+      expMsg(`Saved ${filename}.`);
+    } catch (e) {
+      const c = e && e.code;
+      if (c === "declined") expMsg("Download cancelled.");
+      else if (c === "rate_limited") expMsg("A download prompt is already open. Finish that one first.", true);
+      else if (c === "extension_not_enabled" || c === "rejected_extension") expMsg("This file type can't be downloaded in this view.", true);
+      else expMsg("Couldn't start the download. Try again.", true);
+    }
+  }
+
+  async function exportXlsx() {
+    await load(LIBS.xlsx);
+    const X = window.XLSX;
+    const { rows, byMonth, cats, total } = exportData();
+    const code = CODES[cur] || "";
+    const moneyFmt = `"${cur}"#,##0.00`;
+    const serial = (iso) => { const [y, mo, d] = iso.split("-").map(Number); return (Date.UTC(y, mo - 1, d) - Date.UTC(1899, 11, 30)) / 86400000; };
+    const wb = X.utils.book_new();
+
+    const s1 = X.utils.aoa_to_sheet([["Date", "Day", "Month", "Description", "Category", `Amount (${code})`],
+      ...rows.map((e) => [serial(e.date), parseISO(e.date).toLocaleString("en", { weekday: "short" }), monthName(e.month), e.desc || "", e.category, Number(e.amount)])]);
+    const last = rows.length + 1;
+    rows.forEach((_, i) => { s1[X.utils.encode_cell({ r: i + 1, c: 0 })].z = "yyyy-mm-dd"; s1[X.utils.encode_cell({ r: i + 1, c: 5 })].z = moneyFmt; });
+    X.utils.sheet_add_aoa(s1, [["", "", "", "", "Total", { t: "n", f: `SUM(F2:F${last})`, v: total, z: moneyFmt }]], { origin: { r: last + 1, c: 0 } });
+    s1["!cols"] = [{ wch: 12 }, { wch: 6 }, { wch: 16 }, { wch: 34 }, { wch: 16 }, { wch: 14 }];
+    s1["!autofilter"] = { ref: `A1:F${last}` };
+    X.utils.book_append_sheet(wb, s1, "Expenses");
+
+    const s2 = X.utils.aoa_to_sheet([["Month", "Entries", `Total (${code})`], ...byMonth.map((m) => [monthName(m.month), m.count, m.total])]);
+    byMonth.forEach((_, i) => { s2[X.utils.encode_cell({ r: i + 1, c: 2 })].z = moneyFmt; });
+    X.utils.sheet_add_aoa(s2, [["Total", { t: "n", f: `SUM(B2:B${byMonth.length + 1})`, v: rows.length }, { t: "n", f: `SUM(C2:C${byMonth.length + 1})`, v: total, z: moneyFmt }]], { origin: -1 });
+    s2["!cols"] = [{ wch: 18 }, { wch: 9 }, { wch: 14 }];
+    X.utils.book_append_sheet(wb, s2, "By month");
+
+    const s3 = X.utils.aoa_to_sheet([["Category", "Entries", `Total (${code})`, "Share"], ...cats.map((c) => [c.cat, c.count, c.total, total ? c.total / total : 0])]);
+    cats.forEach((_, i) => { s3[X.utils.encode_cell({ r: i + 1, c: 2 })].z = moneyFmt; s3[X.utils.encode_cell({ r: i + 1, c: 3 })].z = "0.0%"; });
+    s3["!cols"] = [{ wch: 18 }, { wch: 9 }, { wch: 14 }, { wch: 8 }];
+    X.utils.book_append_sheet(wb, s3, "By category");
+
+    const catNames = cats.map((c) => c.cat);
+    const pivot = [["Month", ...catNames, "Total"], ...byMonth.map((m) => {
+      const r = catNames.map((c) => sum(m.items.filter((e) => e.category === c)));
+      return [monthName(m.month), ...r, m.total];
+    })];
+    const s4 = X.utils.aoa_to_sheet(pivot);
+    for (let r = 1; r < pivot.length; r++) for (let c = 1; c <= catNames.length + 1; c++) s4[X.utils.encode_cell({ r, c })].z = moneyFmt;
+    s4["!cols"] = [{ wch: 18 }, ...catNames.map(() => ({ wch: 14 })), { wch: 14 }];
+    X.utils.book_append_sheet(wb, s4, "Month x category");
+
+    const out = X.write(wb, { bookType: "xlsx", type: "array" });
+    await save(`expense-ledger-${stamp()}.xlsx`, new Blob([out]));
+  }
+
+  async function exportPdf() {
+    await load(LIBS.jspdf);
+    await load(LIBS.autotable);
+    const { jsPDF } = window.jspdf;
+    const { rows, byMonth, cats, total } = exportData();
+    const code = CODES[cur] || "";
+    const doc = new jsPDF({ unit: "pt", format: "a4" });
+    const W = doc.internal.pageSize.getWidth(), H = doc.internal.pageSize.getHeight(), M = 44;
+    const ACC = [31, 107, 87], SOFT = [227, 240, 235], INK = [26, 36, 32], MUTED = [93, 106, 100];
+    const head = { fillColor: ACC, textColor: 255, fontStyle: "bold", fontSize: 9 };
+    const base = { fontSize: 9, textColor: INK, cellPadding: 5, lineColor: [221, 227, 223], lineWidth: 0.5 };
+    let y = M;
+
+    doc.setFont("helvetica", "bold"); doc.setFontSize(20); doc.setTextColor(...INK);
+    doc.text("Monthly Expense Ledger", M, y + 8);
+    doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.setTextColor(...MUTED);
+    const range = rows.length ? `${fmtLong(rows[0].date)} to ${fmtLong(rows[rows.length - 1].date)}` : "";
+    doc.text(`All expenses, ${range}. Amounts in ${code}. Exported ${fmtLong(todayISO)}.`, M, y + 26);
+    y += 46;
+
+    const kpis = [["Total spent", `${code} ${n2(total)}`], ["Expenses", String(rows.length)], ["Months", String(byMonth.length)], ["Largest category", cats[0] ? cats[0].cat : "-"]];
+    const kw = (W - 2 * M) / kpis.length;
+    kpis.forEach(([k, v], i) => {
+      const x = M + i * kw;
+      doc.setFillColor(...SOFT); doc.roundedRect(x + (i ? 4 : 0), y, kw - 4, 46, 4, 4, "F");
+      doc.setFontSize(8); doc.setTextColor(...MUTED); doc.text(k.toUpperCase(), x + (i ? 4 : 0) + 10, y + 16);
+      doc.setFont("helvetica", "bold"); doc.setFontSize(13); doc.setTextColor(...INK); doc.text(v, x + (i ? 4 : 0) + 10, y + 35);
+      doc.setFont("helvetica", "normal");
+    });
+    y += 66;
+
+    const heading = (t) => {
+      if (y > H - 110) { doc.addPage(); y = M; }
+      doc.setFont("helvetica", "bold"); doc.setFontSize(12); doc.setTextColor(...INK); doc.text(t, M, y); doc.setFont("helvetica", "normal");
+      y += 8;
+    };
+    const after = () => { y = doc.lastAutoTable.finalY + 24; };
+
+    heading("Spending by month");
+    doc.autoTable({ startY: y, margin: { left: M, right: M }, styles: base, headStyles: head,
+      head: [["Month", "Entries", `Total (${code})`]],
+      body: byMonth.map((m) => [monthName(m.month), m.count, n2(m.total)]),
+      foot: [["Total", rows.length, n2(total)]], footStyles: { fillColor: SOFT, textColor: INK, fontStyle: "bold" },
+      columnStyles: { 1: { halign: "right" }, 2: { halign: "right" } } });
+    after();
+
+    heading("Spending by category");
+    doc.autoTable({ startY: y, margin: { left: M, right: M }, styles: base, headStyles: head,
+      head: [["Category", "Entries", `Total (${code})`, "Share"]],
+      body: cats.map((c) => [c.cat, c.count, n2(c.total), total ? (c.total / total * 100).toFixed(1) + "%" : "-"]),
+      columnStyles: { 1: { halign: "right" }, 2: { halign: "right" }, 3: { halign: "right" } } });
+    after();
+
+    heading("All expenses");
+    const body = [];
+    byMonth.slice().reverse().forEach((m) => {
+      body.push([{ content: `${monthName(m.month)}  ·  ${m.count} ${m.count === 1 ? "entry" : "entries"}  ·  ${code} ${n2(m.total)}`, colSpan: 5, styles: { fillColor: SOFT, fontStyle: "bold" } }]);
+      m.items.slice().reverse().forEach((e) => {
+        const dt = parseISO(e.date);
+        body.push([dt.toLocaleString("en", { day: "numeric", month: "short", year: "numeric" }), dt.toLocaleString("en", { weekday: "short" }), e.desc || "", e.category, n2(e.amount)]);
+      });
+    });
+    doc.autoTable({ startY: y, margin: { left: M, right: M }, styles: base, headStyles: head,
+      head: [["Date", "Day", "Description", "Category", `Amount (${code})`]], body,
+      columnStyles: { 0: { cellWidth: 74 }, 1: { cellWidth: 36 }, 3: { cellWidth: 90 }, 4: { halign: "right", cellWidth: 82 } } });
+
+    const pages = doc.getNumberOfPages();
+    for (let p = 1; p <= pages; p++) {
+      doc.setPage(p); doc.setFontSize(8); doc.setTextColor(...MUTED);
+      doc.text("Monthly Expense Ledger", M, H - 22);
+      doc.text(`Page ${p} of ${pages}`, W - M, H - 22, { align: "right" });
+    }
+    await save(`expense-ledger-${stamp()}.pdf`, doc.output("blob"));
+  }
+
+  async function runExport(kind) {
+    if (exporting || !downloads) return;
+    if (!all.length) { expMsg("Add an expense first, then download.", true); return; }
+    exporting = true;
+    const btn = kind === "pdf" ? $("expPdf") : $("expXlsx");
+    $("expPdf").disabled = $("expXlsx").disabled = true;
+    expMsg(`Preparing the ${kind === "pdf" ? "PDF" : "Excel file"} with all ${all.length} expenses…`);
+    try { await (kind === "pdf" ? exportPdf() : exportXlsx()); }
+    catch (e) { expMsg(e && e.message === "lib" ? "Couldn't load the export tools. Check your connection and try again." : "Something went wrong building the file. Try again.", true); }
+    finally { exporting = false; render(); btn.focus({ preventScroll: true }); }
+  }
+  $("expPdf").addEventListener("click", () => runExport("pdf"));
+  $("expXlsx").addEventListener("click", () => runExport("xlsx"));
+
   render();
+
+  (async () => {
+    downloads = await claude.use("downloads");
+    $("expGroup").hidden = !downloads;
+  })();
 
   (async () => {
     db = await claude.use("db");
@@ -410,6 +702,7 @@ td.r, th.r { text-align: right; }
     db.collection("expenses").onSnapshot((snap) => {
       all = snap.docs.map((d) => ({ id: d.id, ...d.data() })).filter((e) => typeof e.date === "string" && e.month);
       loaded = true;
+      if (editing && !all.some((e) => e.id === editing)) { endEdit(); msg("That expense was removed, so editing stopped.", true); return; }
       render();
     }, () => {
       loaded = true;
