@@ -73,10 +73,26 @@ select.cur option { background: var(--panel); color: var(--ink); }
 .card .note { margin: 0 0 14px; color: var(--muted); font-size: 0.85rem; }
 
 /* entry strip */
-form.entry { display: grid; grid-template-columns: 9.5rem minmax(0, 1.6fr) minmax(0, 1fr) 8rem auto; gap: 10px; align-items: end; }
+form.entry { display: grid; grid-template-columns: 10rem minmax(0, 1.7fr) minmax(0, 1fr) minmax(0, 1fr) 8.5rem; grid-template-areas: "date desc cat pay amt" "file file file act act" "msg msg msg msg msg"; gap: 12px 10px; align-items: end; }
+.a-date { grid-area: date; } .a-desc { grid-area: desc; } .a-cat { grid-area: cat; } .a-pay { grid-area: pay; } .a-amt { grid-area: amt; } .a-file { grid-area: file; } .actions { grid-area: act; justify-content: flex-end; margin-bottom: calc(0.75rem * 1.5 + 4px); } .formmsg { grid-area: msg; }
 .fld { display: grid; gap: 4px; min-width: 0; }
-.fld label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; }
+.fld > label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; }
+.fld > label .opt { text-transform: none; letter-spacing: 0; font-weight: 400; }
 .fld input, .fld select { height: 40px; width: 100%; border: 1px solid var(--line); border-radius: 8px; background: var(--field); color: var(--ink); padding: 0 10px; font: inherit; min-width: 0; }
+.selwrap { position: relative; min-width: 0; }
+.fld .selwrap select { appearance: none; -webkit-appearance: none; padding-right: 32px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; cursor: pointer; }
+.selwrap::after { content: ""; position: absolute; right: 13px; top: 50%; width: 6px; height: 6px; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: translateY(-70%) rotate(45deg); pointer-events: none; }
+.fld select option, .fld select optgroup { background: var(--panel); color: var(--ink); }
+.filebox { position: relative; display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 6px 0 4px; border: 1px dashed var(--line); border-radius: 8px; background: var(--field); min-width: 0; }
+.filebox:focus-within { outline: 2px solid var(--accent); outline-offset: 1px; }
+.filebox.has-file { border-style: solid; }
+.fld input.vh, .vh { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; clip: rect(0 0 0 0); }
+.pick { flex: none; height: 30px; display: inline-flex; align-items: center; gap: 6px; padding: 0 10px; border-radius: 6px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.pick:hover { border-color: var(--accent); color: var(--accent); }
+.pick svg { width: 14px; height: 14px; }
+.fname { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.85rem; color: var(--muted); }
+.filebox.has-file .fname { color: var(--ink); }
+.hint { font-size: 0.75rem; color: var(--muted); }
 .fld input:focus-visible, .fld select:focus-visible, button:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .amt { position: relative; }
 .amt span { position: absolute; left: 10px; bottom: 9px; color: var(--muted); font-family: var(--font-num); pointer-events: none; }
@@ -88,9 +104,28 @@ form.entry { display: grid; grid-template-columns: 9.5rem minmax(0, 1.6fr) minma
 .btn.secondary:hover { border-color: var(--accent); filter: none; }
 .actions { display: flex; gap: 8px; }
 .card.is-editing { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
-.formmsg { grid-column: 1 / -1; margin: 0; font-size: 0.85rem; min-height: 1.3em; color: var(--muted); }
+.formmsg { margin: 0; font-size: 0.85rem; min-height: 1.3em; color: var(--muted); }
 .formmsg.err { color: var(--bad); }
-@media (max-width: 860px) { form.entry { grid-template-columns: 1fr 1fr; } .fld.desc { grid-column: 1 / -1; } .actions { grid-column: 1 / -1; } .actions .btn { flex: 1; } }
+@media (max-width: 860px) {
+  form.entry { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "date amt" "desc desc" "cat pay" "file file" "act act" "msg msg"; }
+  .actions { margin-bottom: 0; }
+  .actions .btn { flex: 1; }
+}
+
+/* receipt viewer */
+.modal { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; background: rgba(10, 16, 13, 0.55); padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.sheet { width: min(760px, 100%); max-height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.sheet header, .sheet footer { display: flex; align-items: center; gap: 10px; padding: 12px 16px; }
+.sheet header { border-bottom: 1px solid var(--line); }
+.sheet footer { border-top: 1px solid var(--line); justify-content: flex-end; flex-wrap: wrap; }
+.sheet h3 { margin: 0; font-size: 1rem; font-weight: 600; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sheet .vmeta { font-size: 0.82rem; color: var(--muted); white-space: nowrap; }
+.vbody { overflow: auto; background: var(--bg); display: grid; place-items: center; min-height: 240px; }
+.vbody img { display: block; max-width: 100%; height: auto; }
+.vbody iframe { width: 100%; height: min(70vh, 900px); border: 0; background: #fff; }
+.vbody .vnote { padding: 32px 20px; text-align: center; color: var(--muted); display: grid; gap: 10px; justify-items: center; }
+.vbody .vnote svg { width: 40px; height: 40px; color: var(--accent); }
+.vbody a { color: var(--accent); }
 
 /* summary */
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
@@ -182,10 +217,46 @@ tr.editing td { background: var(--accent-soft); }
     <h2 id="addTitle">Add an expense</h2>
     <p class="note" id="formNote">Entries are saved in this browser only and sorted into the month of their date.</p>
     <form class="entry" id="form" novalidate>
-      <div class="fld"><label for="fDate">Date</label><input id="fDate" type="date" required></div>
-      <div class="fld desc"><label for="fDesc">Description</label><input id="fDesc" type="text" maxlength="80" placeholder="e.g. Weekly groceries" required></div>
-      <div class="fld"><label for="fCat">Category</label><select id="fCat"></select></div>
-      <div class="fld amt"><label for="fAmt">Amount</label><span id="curSym">€</span><input id="fAmt" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="0.00" required></div>
+      <div class="fld a-date"><label for="fDate">Date</label><input id="fDate" type="date" required></div>
+      <div class="fld a-desc"><label for="fDesc">Description</label><input id="fDesc" type="text" maxlength="80" placeholder="e.g. Weekly groceries" required></div>
+      <div class="fld a-cat"><label for="fCat">Category</label><div class="selwrap"><select id="fCat"></select></div></div>
+      <div class="fld a-pay"><label for="fPay">Payment mode</label><div class="selwrap">
+        <select id="fPay">
+          <option value="">Not specified</option>
+          <option value="Cash">Cash</option>
+          <optgroup label="Cards">
+            <option value="Debit card">Debit card</option>
+            <option value="Credit card">Credit card</option>
+            <option value="Prepaid card">Prepaid / forex card</option>
+          </optgroup>
+          <optgroup label="Online">
+            <option value="UPI">UPI</option>
+            <option value="Net banking">Net banking</option>
+            <option value="Mobile wallet">Mobile wallet</option>
+          </optgroup>
+          <optgroup label="Bank">
+            <option value="Bank transfer">Bank transfer (NEFT / RTGS / IMPS)</option>
+            <option value="Auto-debit">Auto-debit (EMI / standing instruction)</option>
+            <option value="Cheque">Cheque</option>
+            <option value="Demand draft">Demand draft</option>
+          </optgroup>
+          <optgroup label="Other">
+            <option value="Pay later">Pay later / BNPL</option>
+            <option value="Gift card / voucher">Gift card / voucher</option>
+            <option value="Other">Other</option>
+          </optgroup>
+        </select></div></div>
+      <div class="fld amt a-amt"><label for="fAmt">Amount</label><span id="curSym">€</span><input id="fAmt" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="0.00" required></div>
+      <div class="fld a-file" id="fileFld" hidden>
+        <label for="fFile">Bill / receipt <span class="opt">(optional)</span></label>
+        <div class="filebox" id="fileBox">
+          <input class="vh" id="fFile" type="file" accept=".jpg,.jpeg,.png,.webp,.pdf,image/jpeg,image/png,image/webp,application/pdf">
+          <label class="pick" for="fFile"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.5 4.5 5.6 9.4a1.4 1.4 0 0 0 2 2l5-5a2.8 2.8 0 0 0-4-4l-5 5a4.2 4.2 0 0 0 6 6l4.4-4.4"/></svg><span id="pickTxt">Attach file</span></label>
+          <span class="fname" id="fName">No file attached</span>
+          <button class="ico" id="fClear" type="button" hidden aria-label="Remove attached file" title="Remove attached file"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+        </div>
+        <span class="hint">JPG, JPEG, PNG, WEBP or PDF, up to 2 MB</span>
+      </div>
       <div class="actions">
         <button class="btn" id="addBtn" type="submit" disabled>Add expense</button>
         <button class="btn secondary" id="cancelEdit" type="button" hidden>Cancel</button>
@@ -232,11 +303,19 @@ tr.editing td { background: var(--accent-soft); }
     <p class="expmsg" id="expMsg" aria-live="polite" hidden></p>
     <div class="tablebox">
       <table>
-        <thead><tr><th>Date</th><th>Description</th><th>Category</th><th class="r">Amount</th><th class="r"><span class="sr" aria-hidden="true"></span></th></tr></thead>
+        <thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Paid via</th><th class="r">Amount</th><th class="r"><span class="sr" aria-hidden="true"></span></th></tr></thead>
         <tbody id="rows"></tbody>
       </table>
     </div>
   </section>
+</div>
+
+<div class="modal" id="viewer" hidden role="dialog" aria-modal="true" aria-labelledby="vTitle">
+  <div class="sheet">
+    <header><h3 id="vTitle">Receipt</h3><span class="vmeta" id="vMeta"></span><button class="ico" id="vClose" type="button" aria-label="Close"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></header>
+    <div class="vbody" id="vBody"></div>
+    <footer><span class="expmsg" id="vMsg" aria-live="polite"></span><button class="ghost" id="vDownload" type="button"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8m0 0-3-3m3 3 3-3M3 13h10"/></svg>Download</button></footer>
+  </div>
 </div>
 
 <script>
@@ -278,6 +357,99 @@ tr.editing td { background: var(--accent-soft); }
   let editing = null;
   const ADD_NOTE = "Entries are saved in this browser only and sorted into the month of their date.";
 
+  /* ---------- receipt attachments ---------- */
+  const MAX_BYTES = 2 * 1024 * 1024;
+  const TYPES = { jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp", pdf: "application/pdf" };
+  const fmtSize = (b) => b >= 1048576 ? (b / 1048576).toFixed(1) + " MB" : Math.max(1, Math.round(b / 1024)) + " KB";
+  // Storage adapter. Upload abilities are filled in once storage is available.
+  let receipts = { canUpload: false, put: null, remove: async () => {}, src: async (m) => "/_blob/" + m.id, embedPdf: false };
+  let pendingFile = null;      // File chosen in the form
+  let dropExisting = false;    // editing: remove the expense's current attachment
+
+  function fileState() {
+    const e = editing ? all.find((x) => x.id === editing) : null;
+    const current = e && e.receipt && !dropExisting ? e.receipt : null;
+    const box = $("fileBox");
+    if (pendingFile) { $("fName").textContent = `${pendingFile.name} (${fmtSize(pendingFile.size)})`; }
+    else if (current) { $("fName").textContent = `${current.name} (attached)`; }
+    else { $("fName").textContent = "No file attached"; }
+    const has = !!(pendingFile || current);
+    box.classList.toggle("has-file", has);
+    $("fClear").hidden = !has;
+    $("pickTxt").textContent = has ? "Replace" : "Attach file";
+  }
+
+  $("fFile").addEventListener("change", () => {
+    const f = $("fFile").files && $("fFile").files[0];
+    $("fFile").value = "";
+    if (!f) return;
+    const ext = (f.name.split(".").pop() || "").toLowerCase();
+    if (!TYPES[ext]) { msg(`"${f.name}" isn't a supported file. Attach a JPG, JPEG, PNG, WEBP or PDF.`, true); return; }
+    if (f.size > MAX_BYTES) { msg(`"${f.name}" is ${fmtSize(f.size)}. Bills must be 2 MB or smaller, so compress it or take a smaller photo.`, true); return; }
+    if (f.size === 0) { msg(`"${f.name}" is empty. Choose another file.`, true); return; }
+    pendingFile = f;
+    msg("");
+    fileState();
+  });
+  $("fClear").addEventListener("click", () => {
+    if (pendingFile) pendingFile = null; else dropExisting = true;
+    fileState();
+    msg("");
+  });
+
+  /* ---------- receipt viewer ---------- */
+  let viewing = null, lastFocus = null;
+  async function openReceipt(id) {
+    const e = all.find((x) => x.id === id);
+    if (!e || !e.receipt) return;
+    viewing = e; lastFocus = document.activeElement;
+    const m = e.receipt;
+    $("vTitle").textContent = `${e.desc} · ${fmtLong(e.date)}`;
+    $("vMeta").textContent = `${m.name}${m.size ? " · " + fmtSize(m.size) : ""}`;
+    $("vMsg").textContent = "";
+    const body = $("vBody"); body.replaceChildren();
+    $("viewer").hidden = false;
+    $("vClose").focus();
+    let src;
+    try { src = await receipts.src(m); } catch (err) { body.append(note("This file couldn't be found. It may have been removed.")); return; }
+    if (viewing !== e) return;
+    if ((m.type || "").startsWith("image/")) {
+      const img = new Image(); img.alt = `Receipt for ${e.desc}`; img.src = src;
+      img.onerror = () => body.replaceChildren(note("This image couldn't be loaded. It may have been removed."));
+      body.append(img);
+    } else if (receipts.embedPdf) {
+      const fr = document.createElement("iframe"); fr.title = `Receipt for ${e.desc}`; fr.src = src; body.append(fr);
+    } else {
+      const n = note("PDF receipts open outside this page. Download it, or open it in a new tab.");
+      const a = document.createElement("a"); a.href = src; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Open in new tab";
+      n.append(a); body.append(n);
+    }
+  }
+  function note(text) {
+    const d = document.createElement("div"); d.className = "vnote";
+    d.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M6 2.5h8l4.5 4.5v14.5h-12.5z"/><path d="M14 2.5V7h4.5M9 12h6M9 15.5h6"/></svg>';
+    const p = document.createElement("p"); p.style.margin = "0"; p.textContent = text; d.append(p);
+    return d;
+  }
+  function closeReceipt() {
+    $("viewer").hidden = true; $("vBody").replaceChildren(); viewing = null;
+    if (lastFocus && lastFocus.isConnected) lastFocus.focus({ preventScroll: true });
+  }
+  $("vClose").addEventListener("click", closeReceipt);
+  $("viewer").addEventListener("click", (ev) => { if (ev.target === $("viewer")) closeReceipt(); });
+  document.addEventListener("keydown", (ev) => { if (ev.key === "Escape" && !$("viewer").hidden) closeReceipt(); });
+  $("vDownload").addEventListener("click", async () => {
+    if (!viewing || !downloads) { $("vMsg").textContent = "Downloads aren't available here."; return; }
+    const m = viewing.receipt;
+    try {
+      const blob = await (await fetch(await receipts.src(m))).blob();
+      await downloads.save({ filename: m.name, data: blob });
+      $("vMsg").textContent = "";
+    } catch (e) {
+      $("vMsg").textContent = e && e.code === "declined" ? "Download cancelled." : "Couldn't download this file. Try again.";
+    }
+  });
+
   function startEdit(id) {
     const e = all.find((x) => x.id === id);
     if (!e) return;
@@ -287,6 +459,10 @@ tr.editing td { background: var(--accent-soft); }
     $("fDate").value = e.date;
     $("fDesc").value = e.desc || "";
     sel.value = e.category;
+    const pay = $("fPay");
+    if (e.payment && ![...pay.options].some((o) => o.value === e.payment)) pay.append(new Option(e.payment, e.payment));
+    pay.value = e.payment || "";
+    pendingFile = null; dropExisting = false; fileState();
     $("fAmt").value = Number(e.amount).toFixed(2);
     $("addTitle").textContent = "Edit expense";
     $("formNote").textContent = `Editing "${e.desc}" from ${fmtLong(e.date)}. Save to update it, or cancel to leave it unchanged.`;
@@ -308,6 +484,7 @@ tr.editing td { background: var(--accent-soft); }
     $("cancelEdit").hidden = true;
     $("entryCard").classList.remove("is-editing");
     $("fDesc").value = ""; $("fAmt").value = ""; $("fDate").value = todayISO;
+    pendingFile = null; dropExisting = false; fileState();
     render();
   }
 
@@ -323,29 +500,60 @@ tr.editing td { background: var(--accent-soft); }
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return msg("Pick a date for this expense.", true);
     if (!desc) return msg("Add a short description so you can recognise it later.", true);
     if (!(amount > 0)) return msg("Enter an amount greater than zero.", true);
-    const fields = { date, month: date.slice(0, 7), desc, category: $("fCat").value, amount };
-    $("addBtn").disabled = true;
+    const fields = { date, month: date.slice(0, 7), desc, category: $("fCat").value, payment: $("fPay").value || null, amount };
+    const btn = $("addBtn"), label = btn.textContent;
+    btn.disabled = true;
     const id = editing;
+    const before = id ? all.find((x) => x.id === id) : null;
+    const oldReceipt = before && before.receipt ? before.receipt : null;
+
+    // 1. Upload the new attachment first, so the expense never points at a missing file.
+    let newReceipt = null;
+    if (pendingFile) {
+      if (!receipts.canUpload) { msg("Attachments can't be saved in this view.", true); btn.disabled = false; return; }
+      btn.textContent = "Uploading…";
+      const ext = pendingFile.name.split(".").pop().toLowerCase();
+      try {
+        const rid = await receipts.put(pendingFile, TYPES[ext]);
+        newReceipt = { id: rid, name: pendingFile.name, type: TYPES[ext], size: pendingFile.size };
+      } catch (e) {
+        const c = e && e.code;
+        msg(c === "too_large" ? "That file is too large. Attach one that's 2 MB or smaller."
+          : c === "unsupported_type" ? "That file type isn't supported. Attach a JPG, PNG, WEBP or PDF."
+          : c === "quota_or_state" || c === "quota_exceeded" ? "Attachment storage is full. Remove some old receipts and try again."
+          : "Couldn't upload the file. Check your connection and try again.", true);
+        btn.textContent = label; btn.disabled = false; return;
+      }
+      btn.textContent = label;
+    }
+
+    // 2. Save the expense.
+    const receiptField = newReceipt ? { receipt: newReceipt } : (id && dropExisting ? { receipt: null } : {});
     try {
       if (id) {
-        await db.doc("expenses/" + id).update({ ...fields, updatedAt: Date.now() });
+        await db.doc("expenses/" + id).update({ ...fields, ...receiptField, updatedAt: Date.now() });
+        if (oldReceipt && (newReceipt || dropExisting)) receipts.remove(oldReceipt);
         endEdit();
         msg(`Updated ${desc}: ${money(amount)} on ${fmtLong(date)}.`);
       } else {
-        await db.collection("expenses").add({ ...fields, createdAt: Date.now() });
-        msg(`Added ${money(amount)} for ${desc}.`);
+        await db.collection("expenses").add({ ...fields, ...receiptField, createdAt: Date.now() });
+        msg(`Added ${money(amount)} for ${desc}${newReceipt ? " with its bill attached" : ""}.`);
         $("fDesc").value = ""; $("fAmt").value = ""; $("fDesc").focus();
+        pendingFile = null; fileState();
       }
       if (fields.month !== month) { month = fields.month; render(); }
     } catch (e) {
+      if (newReceipt) receipts.remove(newReceipt);
       if (id && e && e.code === "invalid_argument") { endEdit(); msg("That expense no longer exists, so it couldn't be updated.", true); }
       else msg(e && e.code === "quota_exceeded" ? "Storage is full. Remove some old entries and try again." : "Couldn't save that expense. Check your connection and try again.", true);
-    } finally { $("addBtn").disabled = false; }
+    } finally { btn.disabled = false; }
   });
 
   $("rows").addEventListener("click", async (ev) => {
     const ed = ev.target.closest("button.edit");
     if (ed) { startEdit(ed.dataset.id); return; }
+    const rc = ev.target.closest("button.rcpt");
+    if (rc) { openReceipt(rc.dataset.id); return; }
     const b = ev.target.closest("button.del");
     if (!b || !db) return;
     if (!b.classList.contains("arm")) {
@@ -354,7 +562,11 @@ tr.editing td { background: var(--accent-soft); }
       return;
     }
     b.disabled = true;
-    try { await db.doc("expenses/" + b.dataset.id).delete(); } catch (e) { b.disabled = false; msg("Couldn't remove that entry. Try again.", true); }
+    const gone = all.find((x) => x.id === b.dataset.id);
+    try {
+      await db.doc("expenses/" + b.dataset.id).delete();
+      if (gone && gone.receipt) receipts.remove(gone.receipt);
+    } catch (e) { b.disabled = false; msg("Couldn't remove that entry. Try again.", true); }
   });
 
   $("clearEx").addEventListener("click", async () => {
@@ -441,7 +653,7 @@ tr.editing td { background: var(--accent-soft); }
     const tb = $("rows");
     tb.replaceChildren();
     if (!items.length) {
-      const tr = document.createElement("tr"); const td = document.createElement("td"); td.colSpan = 5; td.className = "empty";
+      const tr = document.createElement("tr"); const td = document.createElement("td"); td.colSpan = 6; td.className = "empty";
       td.textContent = loaded ? `No expenses in ${monthName(month)} yet. Add one above.` : "Loading…";
       tr.append(td); tb.append(tr); return;
     }
@@ -455,14 +667,22 @@ tr.editing td { background: var(--accent-soft); }
       const ds = document.createElement("td"); ds.textContent = e.desc || "";
       if (e.example) { const t = document.createElement("span"); t.className = "tag"; t.textContent = "example"; ds.append(t); }
       const c = document.createElement("td"); const chip = document.createElement("span"); chip.className = "chip"; const sw = document.createElement("span"); sw.className = "sw"; sw.style.background = color(e.category); chip.append(sw, document.createTextNode(e.category)); c.append(chip);
+      const pv = document.createElement("td"); pv.style.whiteSpace = "nowrap";
+      if (e.payment) pv.textContent = e.payment; else { pv.textContent = "—"; pv.style.color = "var(--muted)"; }
       const a = document.createElement("td"); a.className = "r num"; a.textContent = money(e.amount);
       const x = document.createElement("td"); x.className = "r"; x.style.whiteSpace = "nowrap";
       const wrap = document.createElement("span"); wrap.className = "rowact";
+      if (e.receipt) {
+        const rb = document.createElement("button"); rb.className = "ico rcpt"; rb.type = "button"; rb.dataset.id = e.id; rb.title = "View bill";
+        rb.setAttribute("aria-label", `View bill for ${e.desc}`);
+        rb.innerHTML = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.5 4.5 5.6 9.4a1.4 1.4 0 0 0 2 2l5-5a2.8 2.8 0 0 0-4-4l-5 5a4.2 4.2 0 0 0 6 6l4.4-4.4"/></svg>';
+        wrap.append(rb);
+      }
       const ed = document.createElement("button"); ed.className = "ico edit"; ed.type = "button"; ed.dataset.id = e.id; ed.title = "Edit"; ed.setAttribute("aria-label", `Edit ${e.desc}`);
       ed.innerHTML = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.8 2.7a1.6 1.6 0 0 1 2.3 2.3L5.5 12.6 2.5 13.5l.9-3z"/><path d="M9.6 3.9l2.5 2.5"/></svg>';
       const b = document.createElement("button"); b.className = "del"; b.type = "button"; b.dataset.id = e.id; b.textContent = "Remove"; b.setAttribute("aria-label", `Remove ${e.desc}`);
       wrap.append(ed, b); x.append(wrap);
-      tr.append(d, ds, c, a, x); tb.append(tr);
+      tr.append(d, ds, c, pv, a, x); tb.append(tr);
     });
   }
 
@@ -543,7 +763,10 @@ tr.editing td { background: var(--accent-soft); }
     const catMap = {};
     rows.forEach((e) => { const c = catMap[e.category] || (catMap[e.category] = { cat: e.category, count: 0, total: 0 }); c.count++; c.total += Number(e.amount) || 0; });
     const cats = Object.values(catMap).sort((a, b) => b.total - a.total);
-    return { rows, byMonth, cats, total: sum(rows) };
+    const payMap = {};
+    rows.forEach((e) => { const k = e.payment || "Not specified"; const p = payMap[k] || (payMap[k] = { pay: k, count: 0, total: 0 }); p.count++; p.total += Number(e.amount) || 0; });
+    const pays = Object.values(payMap).sort((a, b) => (a.pay === "Not specified") - (b.pay === "Not specified") || b.total - a.total);
+    return { rows, byMonth, cats, pays, total: sum(rows) };
   }
   const stamp = () => todayISO;
   const n2 = (v) => Number(v).toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -564,19 +787,19 @@ tr.editing td { background: var(--accent-soft); }
   async function exportXlsx() {
     await load(LIBS.xlsx);
     const X = window.XLSX;
-    const { rows, byMonth, cats, total } = exportData();
+    const { rows, byMonth, cats, pays, total } = exportData();
     const code = CODES[cur] || "";
     const moneyFmt = `"${cur}"#,##0.00`;
     const serial = (iso) => { const [y, mo, d] = iso.split("-").map(Number); return (Date.UTC(y, mo - 1, d) - Date.UTC(1899, 11, 30)) / 86400000; };
     const wb = X.utils.book_new();
 
-    const s1 = X.utils.aoa_to_sheet([["Date", "Day", "Month", "Description", "Category", `Amount (${code})`],
-      ...rows.map((e) => [serial(e.date), parseISO(e.date).toLocaleString("en", { weekday: "short" }), monthName(e.month), e.desc || "", e.category, Number(e.amount)])]);
+    const s1 = X.utils.aoa_to_sheet([["Date", "Day", "Month", "Description", "Category", "Payment mode", `Amount (${code})`, "Bill / receipt"],
+      ...rows.map((e) => [serial(e.date), parseISO(e.date).toLocaleString("en", { weekday: "short" }), monthName(e.month), e.desc || "", e.category, e.payment || "", Number(e.amount), e.receipt ? e.receipt.name : ""])]);
     const last = rows.length + 1;
-    rows.forEach((_, i) => { s1[X.utils.encode_cell({ r: i + 1, c: 0 })].z = "yyyy-mm-dd"; s1[X.utils.encode_cell({ r: i + 1, c: 5 })].z = moneyFmt; });
-    X.utils.sheet_add_aoa(s1, [["", "", "", "", "Total", { t: "n", f: `SUM(F2:F${last})`, v: total, z: moneyFmt }]], { origin: { r: last + 1, c: 0 } });
-    s1["!cols"] = [{ wch: 12 }, { wch: 6 }, { wch: 16 }, { wch: 34 }, { wch: 16 }, { wch: 14 }];
-    s1["!autofilter"] = { ref: `A1:F${last}` };
+    rows.forEach((_, i) => { s1[X.utils.encode_cell({ r: i + 1, c: 0 })].z = "yyyy-mm-dd"; s1[X.utils.encode_cell({ r: i + 1, c: 6 })].z = moneyFmt; });
+    X.utils.sheet_add_aoa(s1, [["", "", "", "", "", "Total", { t: "n", f: `SUM(G2:G${last})`, v: total, z: moneyFmt }]], { origin: { r: last + 1, c: 0 } });
+    s1["!cols"] = [{ wch: 12 }, { wch: 6 }, { wch: 16 }, { wch: 34 }, { wch: 16 }, { wch: 18 }, { wch: 14 }, { wch: 28 }];
+    s1["!autofilter"] = { ref: `A1:H${last}` };
     X.utils.book_append_sheet(wb, s1, "Expenses");
 
     const s2 = X.utils.aoa_to_sheet([["Month", "Entries", `Total (${code})`], ...byMonth.map((m) => [monthName(m.month), m.count, m.total])]);
@@ -589,6 +812,11 @@ tr.editing td { background: var(--accent-soft); }
     cats.forEach((_, i) => { s3[X.utils.encode_cell({ r: i + 1, c: 2 })].z = moneyFmt; s3[X.utils.encode_cell({ r: i + 1, c: 3 })].z = "0.0%"; });
     s3["!cols"] = [{ wch: 18 }, { wch: 9 }, { wch: 14 }, { wch: 8 }];
     X.utils.book_append_sheet(wb, s3, "By category");
+
+    const s5 = X.utils.aoa_to_sheet([["Payment mode", "Entries", `Total (${code})`, "Share"], ...pays.map((p) => [p.pay, p.count, p.total, total ? p.total / total : 0])]);
+    pays.forEach((_, i) => { s5[X.utils.encode_cell({ r: i + 1, c: 2 })].z = moneyFmt; s5[X.utils.encode_cell({ r: i + 1, c: 3 })].z = "0.0%"; });
+    s5["!cols"] = [{ wch: 20 }, { wch: 9 }, { wch: 14 }, { wch: 8 }];
+    X.utils.book_append_sheet(wb, s5, "By payment mode");
 
     const catNames = cats.map((c) => c.cat);
     const pivot = [["Month", ...catNames, "Total"], ...byMonth.map((m) => {
@@ -608,7 +836,7 @@ tr.editing td { background: var(--accent-soft); }
     await load(LIBS.jspdf);
     await load(LIBS.autotable);
     const { jsPDF } = window.jspdf;
-    const { rows, byMonth, cats, total } = exportData();
+    const { rows, byMonth, cats, pays, total } = exportData();
     const code = CODES[cur] || "";
     const doc = new jsPDF({ unit: "pt", format: "a4" });
     const W = doc.internal.pageSize.getWidth(), H = doc.internal.pageSize.getHeight(), M = 44;
@@ -657,18 +885,27 @@ tr.editing td { background: var(--accent-soft); }
       columnStyles: { 1: { halign: "right" }, 2: { halign: "right" }, 3: { halign: "right" } } });
     after();
 
+    heading("Spending by payment mode");
+    doc.autoTable({ startY: y, margin: { left: M, right: M }, styles: base, headStyles: head,
+      head: [["Payment mode", "Entries", `Total (${code})`, "Share"]],
+      body: pays.map((p) => [p.pay, p.count, n2(p.total), total ? (p.total / total * 100).toFixed(1) + "%" : "-"]),
+      columnStyles: { 1: { halign: "right" }, 2: { halign: "right" }, 3: { halign: "right" } } });
+    after();
+
     heading("All expenses");
     const body = [];
     byMonth.slice().reverse().forEach((m) => {
-      body.push([{ content: `${monthName(m.month)}  ·  ${m.count} ${m.count === 1 ? "entry" : "entries"}  ·  ${code} ${n2(m.total)}`, colSpan: 5, styles: { fillColor: SOFT, fontStyle: "bold" } }]);
+      body.push([{ content: `${monthName(m.month)}  ·  ${m.count} ${m.count === 1 ? "entry" : "entries"}  ·  ${code} ${n2(m.total)}`, colSpan: 6, styles: { fillColor: SOFT, fontStyle: "bold" } }]);
       m.items.slice().reverse().forEach((e) => {
         const dt = parseISO(e.date);
-        body.push([dt.toLocaleString("en", { day: "numeric", month: "short", year: "numeric" }), dt.toLocaleString("en", { weekday: "short" }), e.desc || "", e.category, n2(e.amount)]);
+        body.push([dt.toLocaleString("en", { day: "numeric", month: "short", year: "numeric" }), dt.toLocaleString("en", { weekday: "short" }), (e.desc || "") + (e.receipt ? "  [bill]" : ""), e.category, e.payment || "-", n2(e.amount)]);
       });
     });
     doc.autoTable({ startY: y, margin: { left: M, right: M }, styles: base, headStyles: head,
-      head: [["Date", "Day", "Description", "Category", `Amount (${code})`]], body,
-      columnStyles: { 0: { cellWidth: 74 }, 1: { cellWidth: 36 }, 3: { cellWidth: 90 }, 4: { halign: "right", cellWidth: 82 } } });
+      head: [["Date", "Day", "Description", "Category", "Paid via", `Amount (${code})`]], body,
+      columnStyles: { 0: { cellWidth: 70 }, 1: { cellWidth: 32 }, 3: { cellWidth: 78 }, 4: { cellWidth: 76 }, 5: { halign: "right", cellWidth: 76 } } });
+    doc.setFontSize(8); doc.setTextColor(...MUTED);
+    if (rows.some((e) => e.receipt)) { const fy = doc.lastAutoTable.finalY + 14; if (fy < H - 40) doc.text("[bill] = a bill or receipt is attached to this expense in the ledger.", M, fy); }
 
     const pages = doc.getNumberOfPages();
     for (let p = 1; p <= pages; p++) {
@@ -742,6 +979,50 @@ tr.editing td { background: var(--accent-soft); }
       },
     };
   }
+
+  // Bills are stored in this browser's IndexedDB (separate from the expense list, which has a small size limit).
+  (() => {
+    if (!("indexedDB" in window)) return;
+    let dbp = null;
+    const idb = () => dbp || (dbp = new Promise((res, rej) => {
+      const r = indexedDB.open("expense-ledger", 1);
+      r.onupgradeneeded = () => r.result.createObjectStore("receipts");
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => { dbp = null; rej(r.error); };
+    }));
+    const tx = async (mode, fn) => {
+      const d = await idb();
+      return new Promise((res, rej) => {
+        const t = d.transaction("receipts", mode);
+        const req = fn(t.objectStore("receipts"));
+        t.oncomplete = () => res(req && req.result);
+        t.onerror = () => rej(t.error || new Error("idb"));
+        t.onabort = () => rej(t.error && t.error.name === "QuotaExceededError" ? { code: "quota_exceeded" } : (t.error || new Error("idb")));
+      });
+    };
+    const urls = {};
+    receipts = {
+      canUpload: true,
+      embedPdf: true,
+      put: async (file, type) => {
+        const id = "r" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+        const blob = new Blob([await file.arrayBuffer()], { type });
+        await tx("readwrite", (st) => st.put(blob, id));
+        return id;
+      },
+      src: async (m) => {
+        if (urls[m.id]) return urls[m.id];
+        const b = await tx("readonly", (st) => st.get(m.id));
+        if (!b) throw new Error("missing");
+        return (urls[m.id] = URL.createObjectURL(b));
+      },
+      remove: async (m) => {
+        try { await tx("readwrite", (st) => st.delete(m.id)); } catch (e) {}
+        if (urls[m.id]) { URL.revokeObjectURL(urls[m.id]); delete urls[m.id]; }
+      },
+    };
+    $("fileFld").hidden = false;
+  })();
 
   (async () => {
     db = makeLocalDb();
