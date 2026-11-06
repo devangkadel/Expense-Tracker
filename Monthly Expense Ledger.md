@@ -4,6 +4,8 @@ Loading your expenses…
 
 —
 
+Currency
+
 ## Add an expense
 
 Entries are saved to this page and sorted into the month of their date.
@@ -34,7 +36,7 @@ Total spending per month, ending with the month shown.
 
 ## Line items
 
-Every expense recorded for the month, newest first.
+Every expense recorded for the month, newest first. Downloads include every month, not only the one shown.
 
 | Date | Description | Category | Amount |  |
 | --- | --- | --- | --- | --- |
