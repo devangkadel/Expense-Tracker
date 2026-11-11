@@ -43,11 +43,13 @@ It comes in two editions built from the same code:
 | View bills | Paperclip icon on the line item opens the bill in a viewer, with a Download button |
 | Edit expenses | Pencil icon loads an expense back into the form, including its bill |
 | Remove expenses | Two-click remove (click **Remove**, then **Confirm** within 3 seconds). Also deletes the bill. |
-| Month navigation | Step backwards and forwards through months with ‹ › |
+| Month navigation | Step through months with ‹ ›. **This month** jumps back to the current month. |
 | Summary tiles | Total spent, change vs. previous month, daily average, largest category, entry count, biggest single expense |
-| Category breakdown | Donut chart plus a ranked legend with amounts, shares and bars |
-| Six-month trend | Bar chart of monthly totals ending at the month shown |
+| Category breakdown | Interactive donut chart and ranked legend. Hover a category to pop out its slice and show its figures; click to filter line items. |
+| Six-month trend | Bar chart of monthly totals ending at the month shown. Click a bar to open that month. |
 | Line items | Date with weekday (e.g. *Mon, Nov 2*), description, category, payment mode and amount |
+| Sorting | Click any column heading to sort; click again to reverse. Your choice is remembered. |
+| Search and filter | Search box and category filter chip, with a live count and total of what's shown |
 | Export | Download all data as **PDF** or **Excel (.xlsx)** |
 | Currency display | € EUR, $ USD, £ GBP, ₹ INR |
 | Themes | Follows light / dark mode automatically |
@@ -83,7 +85,37 @@ No installation, account or configuration is needed for either edition.
 | Amount | Yes | Greater than zero, rounded to 2 decimals |
 | Bill / receipt | No | One file, JPG / JPEG / PNG / WEBP / PDF, 2 MB max. See [Bills and receipts](#bills-and-receipts). |
 
-Click **Add expense**. If a bill is attached, the button shows **Uploading…** until the file is saved. If the date falls in a different month from the one on screen, the page jumps to that month. Category and payment mode stay selected after adding, which speeds up entering several similar expenses.
+Click **Add expense**. If a bill is attached, the button shows **Uploading…** until the file is saved. If the date falls in a different month from the one on screen, the page jumps to that month. The new row briefly lights up in Line items. Category and payment mode stay selected after adding, which speeds up entering several similar expenses.
+
+### Sorting line items
+
+Click a column heading to sort by it. Click the same heading again to reverse the order. The arrow beside the heading shows the active column and direction.
+
+| Column | First click | Second click |
+|---|---|---|
+| Date | Newest first | Oldest first |
+| Description | A to Z | Z to A |
+| Category | A to Z | Z to A |
+| Paid via | A to Z | Z to A |
+| Amount | Highest first | Lowest first |
+
+- Expenses with no payment mode always sit at the bottom when sorting by **Paid via**.
+- Ties are broken by date, newest first.
+- The sort is remembered in your browser for next time.
+
+### Searching and filtering
+
+- **Search** (above the table) matches description, category, payment mode, amount and date within the month shown.
+- **Category filter:** click a slice of the donut chart, or a category in its legend, to show only that category's line items. A chip with **×** appears next to the search box to clear it. Click the same category again to clear it too.
+- The text at the right of the toolbar shows the result, e.g. *6 of 30 shown · ₹1,131.00*, or the month's entry count and total when nothing is filtered.
+- Search and filter only change what's on screen. Downloads always include everything.
+
+### Exploring the charts
+
+- **Hover** (or Tab to) a category in the donut chart or its legend. Its slice pops out, the others fade, and the centre shows that category's name, amount and share of the month.
+- **Click** a category to filter line items (see above).
+- **Click** a bar in **Last six months**, or press Enter on it, to open that month.
+- **This month**, next to the month arrows, appears whenever you're viewing another month and brings you back.
 
 ### Editing an expense
 
@@ -257,7 +289,7 @@ Each expense is one document:
 |---|---|---|
 | Expenses | Artifact database, collection `expenses` | Browser `localStorage`, key `expense-ledger:v1:expenses` |
 | Bill files | Artifact file storage, served at `/_blob/<id>` | Browser IndexedDB, database `expense-ledger`, store `receipts` |
-| Currency choice | Browser `localStorage` | Browser `localStorage` |
+| Currency and sort choice | Browser `localStorage` (keys `cur`, `sort`) | Browser `localStorage` (keys `cur`, `sort`) |
 | Shared across devices | Yes | No |
 | Live updates between open tabs | Yes | Yes (same browser) |
 
@@ -357,6 +389,8 @@ Bills are uploaded before the expense is saved, so an expense never points at a 
 | "Couldn't load the export tools" | Check your internet connection or ad/script blocker, then try again |
 | "A download prompt is already open" | Accept or dismiss the open prompt first |
 | "That expense no longer exists" while editing | It was removed in another tab or device |
+| "No expenses match" | Clear the search box, or click the category chip's **×** |
+| Line items in an unexpected order | Check which column heading shows the active arrow, and click it to change direction |
 
 ---
 
@@ -364,6 +398,7 @@ Bills are uploaded before the expense is saved, so an expense never points at a 
 
 | Version | Date | Changes |
 |---|---|---|
+| 5 | 2026-11-11 | **Sortable columns** (ascending/descending, remembered). **Interactive donut**: hover pops out a slice and shows its figures; click filters line items. **Search box**, category filter chip, and live count/total. Clickable trend bars and **This month** button. Row hover and add/edit highlight. Keyboard support for chart and trend. |
 | 4 | 2026-11-07 | **Payment mode** dropdown (15 options in 5 groups) and **Paid via** column. **Bill / receipt upload** (JPG, JPEG, PNG, WEBP, PDF, 2 MB max) with viewer and download. Payment-mode summaries in PDF and Excel. Bill file names in Excel. Dropdown arrows kept inside their fields. Standalone `index.html` edition for GitHub Pages. |
 | 3 | 2026-11-06 | PDF and Excel export of all data. Pencil-icon editing. Redesigned currency selector. Weekday shown in line-item dates. |
 | 2 | 2026-11-02 | Added **Miscellaneous** category |
