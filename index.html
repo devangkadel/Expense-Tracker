@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Monthly Expense Ledger</title>
-<meta name="description" content="Log monthly expenses and see a category breakdown, trend and PDF/Excel exports. Data stays in your browser.">
+<meta name="description" content="Track monthly expenses with categories, payment modes, bills, charts and PDF/Excel exports.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500;600&display=swap">
 <style>
@@ -47,7 +47,6 @@
 html { color-scheme: light; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
 body { margin: 0; }
 img { max-width: 100%; }
-[hidden] { display: none !important; }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 body { background: var(--bg); color: var(--ink); font-family: var(--font-ui); font-size: 15px; line-height: 1.5; }
@@ -254,10 +253,131 @@ td .amt-cell { font-weight: 500; }
   tbody tr.flash td { animation: rowflash 1.8s var(--ease); }
   @keyframes rowflash { 0%, 30% { background: var(--accent-soft); } 100% { background: transparent; } }
 }
+/* ---- sign-in ---- */
+.auth { min-height: 100vh; display: grid; place-items: center; padding-block: 40px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.authcard { width: min(420px, 100%); display: grid; gap: 18px; }
+.authbrand { display: flex; align-items: center; gap: 12px; }
+.authmark { width: 44px; height: 44px; flex: none; display: grid; place-items: center; border-radius: 12px; background: var(--accent); color: var(--panel); }
+.authmark svg { width: 24px; height: 24px; }
+.authtitle { margin: 0; font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; }
+.authsub { margin: 0; color: var(--muted); font-size: 0.9rem; }
+.authbody { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px; display: grid; gap: 16px; }
+.authloading { margin: 0; color: var(--muted); text-align: center; padding: 18px 0; }
+.authblocked p { margin: 0; line-height: 1.55; }
+.tabs { display: grid; grid-template-columns: 1fr 1fr; padding: 3px; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; }
+.tab { height: 34px; border: 0; border-radius: 7px; background: none; color: var(--muted); font: inherit; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background-color .15s, color .15s; }
+.tab[aria-selected="true"] { background: var(--panel); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+.tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.authform { display: grid; gap: 14px; }
+.afld { display: grid; gap: 5px; }
+.afld label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; }
+.afld input { height: 44px; width: 100%; border: 1px solid var(--line); border-radius: 8px; background: var(--field); color: var(--ink); padding: 0 12px; font: inherit; }
+.afld input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.afld input.otp { font-family: var(--font-num); font-size: 1.5rem; letter-spacing: 0.5em; text-align: center; padding-left: calc(12px + 0.25em); height: 54px; }
+.btn.wide { width: 100%; height: 44px; }
+.aswitch, .afine { margin: 0; text-align: center; font-size: 0.85rem; color: var(--muted); }
+.otpto { margin: 0; font-size: 0.92rem; line-height: 1.5; }
+.otpto b { overflow-wrap: anywhere; }
+.demo { margin: 0; padding: 9px 12px; border-radius: 8px; border: 1px dashed var(--line); background: var(--bg); font-size: 0.82rem; color: var(--muted); }
+.authmsg { margin: 0; padding: 10px 12px; border-radius: 8px; font-size: 0.88rem; line-height: 1.5; background: var(--bg); border: 1px solid var(--line); }
+.authmsg.err { color: var(--bad); border-color: currentColor; background: transparent; }
+.authmsg.warn { background: var(--accent-soft); border-color: var(--accent); }
+.authmsg.ok { color: var(--good); border-color: currentColor; background: transparent; }
+.authfoot { margin: 0; display: flex; gap: 8px; align-items: flex-start; font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+.authfoot svg { width: 14px; height: 14px; flex: none; margin-top: 2px; }
+
+.guestbox { display: grid; gap: 12px; }
+.or { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.or::before, .or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.acctbtn.guest .avatar { background: var(--muted); }
+/* ---- account menu ---- */
+.acct { position: relative; }
+.acctbtn { height: 34px; display: inline-flex; align-items: center; gap: 8px; padding: 0 8px 0 3px; border: 1px solid var(--line); border-radius: 999px; background: var(--panel); color: var(--ink); font: inherit; font-size: 0.88rem; font-weight: 600; cursor: pointer; max-width: 14rem; }
+.acctbtn:hover { border-color: var(--accent); }
+.acctbtn svg { width: 14px; height: 14px; color: var(--muted); flex: none; }
+.avatar { width: 26px; height: 26px; flex: none; display: grid; place-items: center; border-radius: 50%; background: var(--accent); color: var(--panel); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.02em; }
+.acctname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.acctmenu { position: absolute; right: 0; top: calc(100% + 6px); z-index: 40; width: 16.5rem; max-width: calc(100vw - 32px); background: var(--panel); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.12); padding: 6px; display: grid; }
+.amhead { display: grid; gap: 2px; padding: 8px 10px 10px; border-bottom: 1px solid var(--line); margin-bottom: 4px; min-width: 0; }
+.amhead strong { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.amhead span { font-size: 0.82rem; color: var(--muted); overflow-wrap: anywhere; }
+.amhead .amseq { font-size: 0.75rem; }
+.amitem { display: flex; align-items: center; gap: 10px; height: 36px; padding: 0 10px; border: 0; border-radius: 6px; background: none; color: var(--ink); font: inherit; font-size: 0.9rem; cursor: pointer; text-align: left; }
+.amitem:hover, .amitem:focus-visible { background: var(--row-hover); outline: none; }
+.amitem svg { width: 15px; height: 15px; color: var(--muted); }
+.namesheet { width: min(400px, 100%); }
+.nmbody { padding: 16px; display: grid; gap: 8px; }
+.nmbody .expmsg { margin: 0; min-height: 1.2em; }
+@media (max-width: 520px) { .acctname { display: none; } .acctbtn { padding-right: 6px; } }
 </style>
 </head>
 <body>
-<div class="wrap">
+<main class="auth" id="auth">
+  <div class="authcard">
+    <div class="authbrand">
+      <span class="authmark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3.5h14v17l-2.3-1.5-2.4 1.5-2.3-1.5-2.3 1.5-2.4-1.5L5 20.5z"/><path d="M8.5 8h7M8.5 11.5h7M8.5 15h4"/></svg></span>
+      <div>
+        <h1 class="authtitle">Monthly Expense Ledger</h1>
+        <p class="authsub">Simple monthly expense tracking</p>
+      </div>
+    </div>
+
+    <div class="authbody">
+      <p class="authloading" id="authLoading">Loading your account…</p>
+
+      <div class="authblocked" id="authNoRemote" hidden><p>Registration isn't available in this view. You can still track expenses in this browser.</p></div>
+
+      <div class="tabs" id="authTabs" role="tablist" aria-label="Sign in or create an account" hidden>
+        <button class="tab" id="tabIn" type="button" role="tab" aria-selected="true" aria-controls="fSignIn">Sign in</button>
+        <button class="tab" id="tabUp" type="button" role="tab" aria-selected="false" aria-controls="fSignUp">Create account</button>
+      </div>
+
+      <p class="authmsg" id="authMsg" role="status" aria-live="polite" hidden></p>
+
+      <form class="authform" id="fSignIn" novalidate hidden>
+        <div class="afld"><label for="siContact">Email or mobile number</label><input id="siContact" type="text" inputmode="email" autocomplete="username" placeholder="name@example.com or 98765 43210" maxlength="80"></div>
+        <button class="btn wide" type="submit">Continue</button>
+        <p class="aswitch">New here? <button class="linkbtn" id="toSignUp" type="button">Create an account</button></p>
+      </form>
+
+      <form class="authform" id="fSignUp" novalidate hidden>
+        <div class="afld"><label for="suName">Your name</label><input id="suName" type="text" autocomplete="name" placeholder="e.g. Priya Sharma" maxlength="40"></div>
+        <div class="afld"><label for="suContact">Email or mobile number</label><input id="suContact" type="text" inputmode="email" autocomplete="username" placeholder="name@example.com or 98765 43210" maxlength="80"></div>
+        <button class="btn wide" type="submit">Create account</button>
+        <p class="afine">Registration is limited to 10 people during testing.</p>
+      </form>
+
+      <form class="authform" id="fOtp" novalidate hidden>
+        <p class="otpto"><span id="otpHow">We've sent a 6-digit code to</span> <b id="otpTo"></b></p>
+        <div class="afld"><label for="otp">Verification code</label><input id="otp" class="otp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="••••••"></div>
+        <p class="demo" id="otpDemo"></p>
+        <button class="btn wide" type="submit">Verify and continue</button>
+        <p class="aswitch"><button class="linkbtn" id="otpResend" type="button">Resend code</button> · <button class="linkbtn" id="otpBack" type="button">Use a different email or number</button></p>
+      </form>
+
+      <div class="guestbox" id="guestBox" hidden>
+        <div class="or" aria-hidden="true"><span>or</span></div>
+        <button class="btn secondary wide" id="guestBtn" type="button">Continue without an account</button>
+        <p class="afine">Track expenses straight away, without signing in. Everything is saved in this browser.</p>
+      </div>
+    </div>
+
+    <p class="authfoot"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="6"/><path d="M8 7.2v3.6M8 5.2v.1"/></svg>Testing version: sign-in codes are simulated and accounts aren't password-protected. In this standalone copy, accounts and expenses are stored in this browser only, so they don't sync to other browsers or computers. Use dummy details and don't store anything sensitive.</p>
+  </div>
+</main>
+
+<div class="modal" id="nameDlg" hidden role="dialog" aria-modal="true" aria-labelledby="nmTitle">
+  <form class="sheet namesheet" id="fNameForm" novalidate>
+    <header><h3 id="nmTitle">Edit your name</h3></header>
+    <div class="nmbody">
+      <div class="afld"><label for="nmInput">Name</label><input id="nmInput" type="text" maxlength="40" autocomplete="name"></div>
+      <p class="expmsg err" id="nmMsg" aria-live="polite"></p>
+    </div>
+    <footer><button class="btn secondary" id="nmCancel" type="button">Cancel</button><button class="btn" id="nmSave" type="submit">Save</button></footer>
+  </form>
+</div>
+
+<div class="wrap" id="app" hidden>
   <header class="top">
     <div>
       <h1>Monthly Expense Ledger</h1>
@@ -279,6 +399,22 @@ td .amt-cell { font-weight: 500; }
           <option value="₹">₹ INR</option>
         </select>
       </div>
+      <div class="acct">
+        <button class="acctbtn" id="acctBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="acctMenu">
+          <span class="avatar" id="acctInit" aria-hidden="true">?</span><span class="acctname" id="acctName">Account</span>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 6.5 3.5 3.5 3.5-3.5"/></svg>
+        </button>
+        <div class="acctmenu" id="acctMenu" hidden>
+          <div class="amhead">
+            <strong id="amName"></strong>
+            <span id="amContact"></span>
+            <span class="amseq" id="amSeq"></span>
+          </div>
+          <button class="amitem" id="amEdit" type="button"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.8 2.7a1.6 1.6 0 0 1 2.3 2.3L5.5 12.6 2.5 13.5l.9-3z"/></svg>Edit name</button>
+          <button class="amitem" id="amSwitch" type="button" hidden><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="5.5" r="2.5"/><path d="M3 13.5c.6-2.4 2.6-4 5-4s4.4 1.6 5 4"/></svg>Sign in or create an account</button>
+          <button class="amitem" id="amSignOut" type="button"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 13.5H3.5a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1H6M10.5 11 13.5 8l-3-3M13.5 8H6"/></svg>Sign out</button>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -286,7 +422,7 @@ td .amt-cell { font-weight: 500; }
 
   <section class="card" id="entryCard" aria-labelledby="addTitle">
     <h2 id="addTitle">Add an expense</h2>
-    <p class="note" id="formNote">Entries are saved in this browser only and sorted into the month of their date.</p>
+    <p class="note" id="formNote">Entries are saved in this browser and sorted into the month of their date.</p>
     <form class="entry" id="form" novalidate>
       <div class="fld a-date"><label for="fDate">Date</label><input id="fDate" type="date" required></div>
       <div class="fld a-desc"><label for="fDesc">Description</label><input id="fDesc" type="text" maxlength="80" placeholder="e.g. Weekly groceries" required></div>
@@ -406,6 +542,47 @@ td .amt-cell { font-weight: 500; }
 </div>
 
 <script>
+/* Standalone runtime: provides storage and downloads using this browser.
+   Records (accounts and registered users' expenses) live in localStorage under one key, so
+   they stay on this browser and device only. Swap this block for a hosted database
+   (e.g. Firebase or Supabase) to make accounts work across browsers and computers. */
+(() => {
+  const KEY = "expense-ledger:standalone:db:v1";
+  let persistent = true;
+  const read = () => { try { return JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { persistent = false; return {}; } };
+  let mem = read();
+  const subs = new Set();
+  const kids = (col) => Object.keys(mem).filter((k) => k.startsWith(col + "/") && !k.slice(col.length + 1).includes("/"))
+    .map((k) => ({ id: k.split("/").pop(), exists: true, data: () => JSON.parse(JSON.stringify(mem[k])) }));
+  const snapOf = (col) => { const d = kids(col); return { docs: d, size: d.length, empty: !d.length }; };
+  const notify = () => subs.forEach((s) => s.fn(snapOf(s.col)));
+  const commit = (next) => {
+    if (persistent) { try { localStorage.setItem(KEY, JSON.stringify(next)); } catch (e) { throw { code: "quota_exceeded", message: "Browser storage is full" }; } }
+    mem = next; notify();
+  };
+  window.addEventListener("storage", (e) => { if (e.key === KEY) { mem = read(); notify(); } });
+  const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+  const docRef = (p) => ({ id: p.split("/").pop(), path: p,
+    get: async () => ({ id: p.split("/").pop(), exists: p in mem, data: () => (p in mem ? JSON.parse(JSON.stringify(mem[p])) : undefined) }),
+    set: async (d) => commit({ ...mem, [p]: d }),
+    update: async (d) => { if (!(p in mem)) throw { code: "invalid_argument", message: "Document does not exist" }; commit({ ...mem, [p]: { ...mem[p], ...d } }); },
+    delete: async () => { const n = { ...mem }; delete n[p]; commit(n); } });
+  const col = (c) => ({ path: c,
+    limit: () => col(c),
+    get: async () => snapOf(c),
+    add: async (d) => { const id = newId(); commit({ ...mem, [c + "/" + id]: d }); return docRef(c + "/" + id); },
+    onSnapshot: (fn) => { const s = { col: c, fn }; subs.add(s); setTimeout(() => fn(snapOf(c)), 0); return () => subs.delete(s); } });
+  const db = { doc: docRef, collection: col };
+  const downloads = { save: async ({ filename, data }) => {
+    const url = URL.createObjectURL(data instanceof Blob ? data : new Blob([data]));
+    const a = document.createElement("a"); a.href = url; a.download = filename; a.style.display = "none";
+    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000);
+    return { status: "saved" };
+  } };
+  window.ledgerRuntime = { use: async (name) => name === "db" ? db : name === "downloads" ? downloads : null };
+})();
+</script>
+<script>
 (() => {
   const CATS = ["Housing", "Groceries", "Dining out", "Transport", "Utilities", "Health", "Entertainment", "Shopping", "Subscriptions", "Miscellaneous", "Other"];
   const color = (c) => `var(--c${CATS.indexOf(c) + 1 || 11})`;
@@ -417,6 +594,8 @@ td .amt-cell { font-weight: 500; }
   let all = [];
   let db = null;
   let loaded = false;
+  let store = null; // where expenses live: shared db (account) or this browser (guest)
+  let EXP = () => "";
 
   /* ---------- line-item view state: sort, category filter, search ---------- */
   const txt = (s) => (s || "").toString();
@@ -478,7 +657,7 @@ td .amt-cell { font-weight: 500; }
   const fmtLong = (iso) => parseISO(iso).toLocaleString("en", { weekday: "short", day: "numeric", month: "short", year: "numeric" });
 
   let editing = null;
-  const ADD_NOTE = "Entries are saved in this browser only and sorted into the month of their date.";
+  const ADD_NOTE = "Entries are saved in this browser and sorted into the month of their date.";
 
   /* ---------- receipt attachments ---------- */
   const MAX_BYTES = 2 * 1024 * 1024;
@@ -616,7 +795,7 @@ td .amt-cell { font-weight: 500; }
 
   $("form").addEventListener("submit", async (ev) => {
     ev.preventDefault();
-    if (!db) return;
+    if (!store) return;
     const date = $("fDate").value;
     const desc = $("fDesc").value.trim();
     const amount = Math.round(parseFloat($("fAmt").value) * 100) / 100;
@@ -654,13 +833,13 @@ td .amt-cell { font-weight: 500; }
     const receiptField = newReceipt ? { receipt: newReceipt } : (id && dropExisting ? { receipt: null } : {});
     try {
       if (id) {
-        await db.doc("expenses/" + id).update({ ...fields, ...receiptField, updatedAt: Date.now() });
+        await store.doc(EXP() + "/" + id).update({ ...fields, ...receiptField, updatedAt: Date.now() });
         if (oldReceipt && (newReceipt || dropExisting)) receipts.remove(oldReceipt);
         flashId = id;
         endEdit();
         msg(`Updated ${desc}: ${money(amount)} on ${fmtLong(date)}.`);
       } else {
-        const ref = await db.collection("expenses").add({ ...fields, ...receiptField, createdAt: Date.now() });
+        const ref = await store.collection(EXP()).add({ ...fields, ...receiptField, createdAt: Date.now() });
         if (ref && ref.id) { flashId = ref.id; render(); }
         msg(`Added ${money(amount)} for ${desc}${newReceipt ? " with its bill attached" : ""}.`);
         $("fDesc").value = ""; $("fAmt").value = ""; $("fDesc").focus();
@@ -680,7 +859,7 @@ td .amt-cell { font-weight: 500; }
     const rc = ev.target.closest("button.rcpt");
     if (rc) { openReceipt(rc.dataset.id); return; }
     const b = ev.target.closest("button.del");
-    if (!b || !db) return;
+    if (!b || !store) return;
     if (!b.classList.contains("arm")) {
       b.classList.add("arm"); b.textContent = "Confirm";
       setTimeout(() => { if (b.isConnected) { b.classList.remove("arm"); b.textContent = "Remove"; } }, 3000);
@@ -689,7 +868,7 @@ td .amt-cell { font-weight: 500; }
     b.disabled = true;
     const gone = all.find((x) => x.id === b.dataset.id);
     try {
-      await db.doc("expenses/" + b.dataset.id).delete();
+      await store.doc(EXP() + "/" + b.dataset.id).delete();
       if (gone && gone.receipt) receipts.remove(gone.receipt);
     } catch (e) { b.disabled = false; msg("Couldn't remove that entry. Try again.", true); }
   });
@@ -698,7 +877,7 @@ td .amt-cell { font-weight: 500; }
     const btn = $("clearEx");
     if (btn.dataset.arm !== "1") { btn.dataset.arm = "1"; btn.textContent = "Click again to remove all examples"; setTimeout(() => { btn.dataset.arm = ""; btn.textContent = "Remove example entries"; }, 3500); return; }
     btn.disabled = true;
-    for (const e of all.filter((x) => x.example)) { try { await db.doc("expenses/" + e.id).delete(); } catch (err) {} }
+    for (const e of all.filter((x) => x.example)) { try { await store.doc(EXP() + "/" + e.id).delete(); } catch (err) {} }
     btn.disabled = false; btn.dataset.arm = ""; btn.textContent = "Remove example entries";
   });
 
@@ -1154,55 +1333,12 @@ td .amt-cell { font-weight: 500; }
 
   render();
 
-  // Native browser download (replaces the Claude downloads capability)
-  downloads = {
-    save: async ({ filename, data }) => {
-      const url = URL.createObjectURL(data instanceof Blob ? data : new Blob([data]));
-      const a = document.createElement("a");
-      a.href = url; a.download = filename; a.style.display = "none";
-      document.body.append(a); a.click(); a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 4000);
-      return { status: "saved" };
-    },
-  };
-  $("expGroup").hidden = false;
+  (async () => {
+    downloads = await ledgerRuntime.use("downloads");
+    $("expGroup").hidden = !downloads;
+  })();
 
-  // Browser-local store (replaces the Claude db capability). Same small API the page uses.
-  function makeLocalDb() {
-    const KEY = "expense-ledger:v1:expenses";
-    let persistent = true;
-    const read = () => { try { return JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { persistent = false; return {}; } };
-    let mem = read();
-    try { localStorage.setItem(KEY + ":probe", "1"); localStorage.removeItem(KEY + ":probe"); } catch (e) { persistent = false; }
-    const listeners = new Set();
-    const snap = () => ({ docs: Object.entries(mem).map(([id, d]) => ({ id, data: () => d })) });
-    const commit = (next) => {
-      if (persistent) {
-        try { localStorage.setItem(KEY, JSON.stringify(next)); }
-        catch (e) { throw { code: "quota_exceeded", message: "Browser storage is full" }; }
-      }
-      mem = next;
-      const s = snap(); listeners.forEach((fn) => fn(s));
-    };
-    window.addEventListener("storage", (e) => { if (e.key === KEY) { mem = read(); const s = snap(); listeners.forEach((fn) => fn(s)); } });
-    const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
-    return {
-      persistent: () => persistent,
-      collection: () => ({
-        add: async (data) => { const id = newId(); commit({ ...mem, [id]: data }); return { id }; },
-        onSnapshot: (fn) => { listeners.add(fn); setTimeout(() => fn(snap()), 0); return () => listeners.delete(fn); },
-      }),
-      doc: (path) => {
-        const id = path.split("/").pop();
-        return {
-          update: async (d) => { if (!mem[id]) throw { code: "invalid_argument", message: "missing" }; commit({ ...mem, [id]: { ...mem[id], ...d } }); },
-          delete: async () => { const next = { ...mem }; delete next[id]; commit(next); },
-        };
-      },
-    };
-  }
-
-  // Bills are stored in this browser's IndexedDB (separate from the expense list, which has a small size limit).
+  // Bills are stored in this browser's IndexedDB.
   (() => {
     if (!("indexedDB" in window)) return;
     let dbp = null;
@@ -1246,22 +1382,309 @@ td .amt-cell { font-weight: 500; }
     $("fileFld").hidden = false;
   })();
 
-  (async () => {
-    db = makeLocalDb();
-    if (!db.persistent()) {
-      const b = $("banner"); b.hidden = false; b.textContent = "This browser is blocking site storage (private window or strict privacy settings), so entries will disappear when you close the page. Download an Excel copy before leaving.";
+  /* ---------- accounts & sign-in (testing phase) ----------
+     Two ways to use the ledger:
+     1. Registered account (max 10): identified only by email or mobile number plus a mock OTP.
+        Expenses live in ledgers/<accountId>/expenses in the page's shared database, so they
+        follow the person to any browser or computer. This is deliberately NOT secure: anyone
+        who knows a registered email/number can sign in as that person.
+     2. Continue without an account: expenses are kept in this browser's local storage only. */
+  const MAX_USERS = 10;
+  const SESSION_DAYS = 30;
+  const SESSION_KEY = "ledger-session:v2";
+  let userCap = null, mode = null, acctId = null, account = null, unsubExp = null;
+  let memSession = null;
+  const codeFor = (seq) => String(seq % 10).repeat(6); // mock: user 1 -> 111111 … user 9 -> 999999, user 10 -> 000000
+
+  const readSession = () => { try { const s = JSON.parse(localStorage.getItem(SESSION_KEY) || "null"); return s && s.exp > Date.now() ? s : null; } catch (e) { return memSession; } };
+  const writeSession = (s) => { memSession = s; try { s ? localStorage.setItem(SESSION_KEY, JSON.stringify({ ...s, exp: Date.now() + SESSION_DAYS * 864e5 })) : localStorage.removeItem(SESSION_KEY); } catch (e) {} };
+
+  // Browser-only store for "continue without an account" (same small API as the shared db).
+  function makeLocalDb() {
+    const KEY = "expense-ledger:guest:expenses";
+    let persistent = true;
+    const read = () => { try { return JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { persistent = false; return {}; } };
+    let mem = read();
+    try { localStorage.setItem(KEY + ":probe", "1"); localStorage.removeItem(KEY + ":probe"); } catch (e) { persistent = false; }
+    const listeners = new Set();
+    const snap = () => ({ docs: Object.entries(mem).map(([id, d]) => ({ id, exists: true, data: () => d })) });
+    const commit = (next) => {
+      if (persistent) { try { localStorage.setItem(KEY, JSON.stringify(next)); } catch (e) { throw { code: "quota_exceeded", message: "Browser storage is full" }; } }
+      mem = next; const s = snap(); listeners.forEach((fn) => fn(s));
+    };
+    window.addEventListener("storage", (e) => { if (e.key === KEY) { mem = read(); const s = snap(); listeners.forEach((fn) => fn(s)); } });
+    const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+    return {
+      persistent: () => persistent,
+      collection: () => ({
+        add: async (data) => { const id = newId(); commit({ ...mem, [id]: data }); return { id }; },
+        onSnapshot: (fn) => { listeners.add(fn); setTimeout(() => fn(snap()), 0); return () => listeners.delete(fn); },
+      }),
+      doc: (path) => {
+        const id = path.split("/").pop();
+        return {
+          update: async (d) => { if (!mem[id]) throw { code: "invalid_argument", message: "missing" }; commit({ ...mem, [id]: { ...mem[id], ...d } }); },
+          delete: async () => { const next = { ...mem }; delete next[id]; commit(next); },
+        };
+      },
+    };
+  }
+
+  function parseContact(raw) {
+    const s = (raw || "").trim();
+    if (!s) return { error: "Enter your email address or mobile number." };
+    if (s.includes("@")) {
+      const v = s.toLowerCase();
+      return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) ? { kind: "email", value: v, key: v } : { error: "That email address doesn't look right. Check it, e.g. name@example.com." };
     }
-    $("addBtn").disabled = false;
-    db.collection("expenses").onSnapshot((snap) => {
+    const cleaned = s.replace(/[\s\-().]/g, "");
+    if (/^\+?\d{10,15}$/.test(cleaned)) { const d = cleaned.replace("+", ""); return { kind: "mobile", value: cleaned, key: d.slice(-10) }; }
+    return { error: "Enter a valid email address, or a mobile number with 10 to 15 digits." };
+  }
+  const maskContact = (c) => c.kind === "email"
+    ? c.value.replace(/^(.{1,2})[^@]*(@.*)$/, (m, a, b) => a + "•••" + b)
+    : "•••• " + c.key.slice(-4);
+  async function hashOf(c) {
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`expense-ledger:v1:${c.kind}:${c.key}`));
+    return [...new Uint8Array(buf)].map((x) => x.toString(16).padStart(2, "0")).join("");
+  }
+  async function listAccounts() {
+    const snap = await db.collection("accounts").get();
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  }
+  const newAcctId = () => "a" + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+
+  // ---- auth screen helpers
+  let pending = null, attempts = 0, remoteOk = false;
+  function authMsg(text, kind) { const m = $("authMsg"); m.hidden = !text; m.textContent = text || ""; m.className = "authmsg" + (kind ? " " + kind : ""); }
+  function showAuthStep(step) {
+    $("app").hidden = true; $("auth").hidden = false;
+    $("authLoading").hidden = step !== "loading";
+    $("authTabs").hidden = !(step === "signin" || step === "signup");
+    $("fSignIn").hidden = step !== "signin";
+    $("fSignUp").hidden = step !== "signup";
+    $("fOtp").hidden = step !== "otp";
+    $("authNoRemote").hidden = step !== "noremote";
+    $("guestBox").hidden = step === "loading" || step === "otp";
+    $("tabIn").setAttribute("aria-selected", String(step === "signin"));
+    $("tabUp").setAttribute("aria-selected", String(step === "signup"));
+    const focusEl = { signin: "siContact", signup: "suName", otp: "otp", noremote: "guestBtn" }[step];
+    if (focusEl) setTimeout(() => $(focusEl).focus(), 0);
+  }
+  function busy(form, on, label) {
+    const b = form.querySelector("button[type=submit]");
+    if (on) { b.dataset.label = b.textContent; b.textContent = label; b.disabled = true; } else { b.textContent = b.dataset.label || b.textContent; b.disabled = false; }
+  }
+  const LIMIT_MSG = `Thanks for your interest! Registration is limited to ${MAX_USERS} people during testing and every place is taken. You can still track expenses by choosing "Continue without an account" below.`;
+
+  $("tabIn").addEventListener("click", () => { authMsg(""); showAuthStep("signin"); });
+  $("tabUp").addEventListener("click", () => { authMsg(""); showAuthStep("signup"); });
+  $("toSignUp").addEventListener("click", () => { authMsg(""); showAuthStep("signup"); });
+  $("guestBtn").addEventListener("click", () => { writeSession({ mode: "guest" }); enterGuest(); });
+
+  $("fSignIn").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    const c = parseContact($("siContact").value);
+    if (c.error) return authMsg(c.error, "err");
+    busy($("fSignIn"), true, "Checking…");
+    try {
+      const h = await hashOf(c);
+      const accts = await listAccounts();
+      const found = accts.find((a) => a.hash === h);
+      if (!found) {
+        $("suContact").value = $("siContact").value.trim();
+        showAuthStep("signup");
+        return authMsg(accts.length >= MAX_USERS ? LIMIT_MSG : "We couldn't find an account for that email or number. Add your name to create one.", accts.length >= MAX_USERS ? "warn" : "");
+      }
+      pending = { mode: "signin", contact: c, hash: h, seq: found.seq, acctId: found.id };
+      startOtp();
+    } catch (e) {
+      authMsg("Couldn't reach the account list. Check your connection and try again, or continue without an account.", "err");
+    } finally { busy($("fSignIn"), false); }
+  });
+
+  $("fSignUp").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    const name = $("suName").value.trim().replace(/\s+/g, " ");
+    if (!name) return authMsg("Enter your name.", "err");
+    const c = parseContact($("suContact").value);
+    if (c.error) return authMsg(c.error, "err");
+    busy($("fSignUp"), true, "Checking…");
+    try {
+      const h = await hashOf(c);
+      const accts = await listAccounts();
+      if (accts.some((a) => a.hash === h)) { $("siContact").value = $("suContact").value.trim(); showAuthStep("signin"); return authMsg("That email or number is already registered. Sign in with it instead.", ""); }
+      if (accts.length >= MAX_USERS) return authMsg(LIMIT_MSG, "warn");
+      const seq = accts.reduce((m, a) => Math.max(m, Number(a.seq) || 0), 0) + 1;
+      pending = { mode: "signup", contact: c, hash: h, name, seq };
+      startOtp();
+    } catch (e) {
+      authMsg("Couldn't check registrations. Check your connection and try again, or continue without an account.", "err");
+    } finally { busy($("fSignUp"), false); }
+  });
+
+  function startOtp() {
+    attempts = 0;
+    $("otp").value = "";
+    $("otpTo").textContent = pending.contact.value;
+    $("otpHow").textContent = pending.contact.kind === "email" ? "We've sent a 6-digit code to" : "We've sent a 6-digit code by SMS to";
+    $("otpDemo").textContent = `Demo mode: no message is actually sent. Your code is ${codeFor(pending.seq)}.`;
+    authMsg("");
+    showAuthStep("otp");
+  }
+  $("otpBack").addEventListener("click", () => { const m = pending ? pending.mode : "signin"; pending = null; authMsg(""); showAuthStep(m); });
+  $("otpResend").addEventListener("click", () => { if (pending) { authMsg(`A new code is on its way to ${pending.contact.value}.`, "ok"); $("otp").focus(); } });
+  $("otp").addEventListener("input", () => { const v = $("otp").value.replace(/\D/g, "").slice(0, 6); if (v !== $("otp").value) $("otp").value = v; if (v.length === 6) $("fOtp").requestSubmit(); });
+
+  $("fOtp").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    if (!pending) return showAuthStep("signin");
+    const v = $("otp").value.trim();
+    if (!/^\d{6}$/.test(v)) return authMsg("Enter all 6 digits of the code.", "err");
+    if (v !== codeFor(pending.seq)) {
+      attempts++;
+      $("otp").value = "";
+      if (attempts >= 5) { const m = pending.mode; pending = null; showAuthStep(m); return authMsg("Too many incorrect codes. Start again to get a new one.", "err"); }
+      return authMsg(`That code isn't right. ${5 - attempts} ${5 - attempts === 1 ? "try" : "tries"} left.`, "err");
+    }
+    busy($("fOtp"), true, "Verifying…");
+    try {
+      let id = pending.acctId;
+      if (pending.mode === "signup") {
+        const accts = await listAccounts(); // re-check just before creating
+        const dup = accts.find((a) => a.hash === pending.hash);
+        if (dup) id = dup.id;
+        else {
+          if (accts.length >= MAX_USERS) { pending = null; showAuthStep("signup"); return authMsg(LIMIT_MSG, "warn"); }
+          const taken = accts.some((a) => Number(a.seq) === pending.seq);
+          const seq = taken ? accts.reduce((m, a) => Math.max(m, Number(a.seq) || 0), 0) + 1 : pending.seq;
+          id = newAcctId();
+          await db.doc("accounts/" + id).set({ seq, name: pending.name, kind: pending.contact.kind, hash: pending.hash, masked: maskContact(pending.contact), createdAt: Date.now() });
+          await claimLegacyLedger(id);
+        }
+      }
+      writeSession({ mode: "account", acctId: id, contact: pending.contact.value });
+      pending = null;
+      await enterAccount(id);
+    } catch (e) {
+      authMsg(e && (e.code === "permission_denied" || e.code === "not_granted") ? "Couldn't save your account in this browser. Check that site storage is allowed, or continue without an account." : "Couldn't finish signing in. Check your connection and try again.", "err");
+    } finally { busy($("fOtp"), false); }
+  });
+
+  async function claimLegacyLedger() {} // not used in the standalone edition
+  let flashMsg = "";
+
+  // ---- entering the app
+  function startLedger(collectionPath) {
+    loaded = false; all = []; render();
+    if (unsubExp) unsubExp();
+    unsubExp = store.collection(collectionPath).onSnapshot((snap) => {
       all = snap.docs.map((d) => ({ id: d.id, ...d.data() })).filter((e) => typeof e.date === "string" && e.month);
       loaded = true;
       if (editing && !all.some((e) => e.id === editing)) { endEdit(); msg("That expense was removed, so editing stopped.", true); return; }
       render();
     }, () => {
       loaded = true;
-      const b = $("banner"); b.hidden = false; b.textContent = "Couldn't read your saved expenses. Reload the page.";
+      const b = $("banner"); b.hidden = false; b.textContent = "Lost the connection to your saved expenses. Reload the page to reconnect.";
       render();
     });
+  }
+  function showApp() { $("auth").hidden = true; $("app").hidden = false; $("addBtn").disabled = false; $("banner").hidden = true; }
+
+  async function enterAccount(id) {
+    const snap = await db.doc("accounts/" + id).get();
+    if (!snap.exists) { writeSession(null); showAuthStep("signin"); return authMsg("That account no longer exists. Sign in again or create a new one.", "err"); }
+    mode = "account"; acctId = id; account = snap.data();
+    store = db; EXP = () => `ledgers/${acctId}/expenses`;
+    showApp(); renderAcct(); startLedger(EXP());
+    if (flashMsg) { msg(flashMsg); flashMsg = ""; }
+  }
+  function enterGuest() {
+    mode = "guest"; acctId = null; account = null;
+    const local = makeLocalDb();
+    store = local; EXP = () => "guest/expenses";
+    showApp(); renderAcct(); startLedger(EXP());
+    if (!local.persistent()) { const b = $("banner"); b.hidden = false; b.textContent = "This browser is blocking site storage (private window or strict privacy settings), so entries will disappear when you close the page."; }
+  }
+
+  function initials(n) { const p = (n || "").trim().split(/\s+/).filter(Boolean); return ((p[0] || "?")[0] + (p.length > 1 ? p[p.length - 1][0] : "")).toUpperCase(); }
+  function renderAcct() {
+    const guest = mode === "guest";
+    const s = readSession() || {};
+    const nm = guest ? "Guest" : (account.name || "Your account");
+    $("acctInit").textContent = guest ? "G" : initials(account.name || "?");
+    $("acctBtn").classList.toggle("guest", guest);
+    $("acctName").textContent = nm;
+    $("amName").textContent = guest ? "Using without an account" : nm;
+    $("amContact").textContent = guest ? "Expenses are saved in this browser only." : (s.contact || account.masked || "");
+    $("amSeq").textContent = guest ? "" : `Registered user ${account.seq} of ${MAX_USERS}`;
+    $("amEdit").hidden = guest;
+    $("amSwitch").hidden = !guest;
+    $("amSignOut").hidden = guest;
+    $("acctBtn").setAttribute("aria-label", `Account: ${nm}`);
+  }
+  const closeMenu = () => { $("acctMenu").hidden = true; $("acctBtn").setAttribute("aria-expanded", "false"); };
+  $("acctBtn").addEventListener("click", (ev) => { ev.stopPropagation(); const open = $("acctMenu").hidden; $("acctMenu").hidden = !open; $("acctBtn").setAttribute("aria-expanded", String(open)); });
+  document.addEventListener("click", (ev) => { if (!$("acctMenu").hidden && !ev.target.closest("#acctMenu")) closeMenu(); });
+  document.addEventListener("keydown", (ev) => { if (ev.key === "Escape" && !$("acctMenu").hidden) { closeMenu(); $("acctBtn").focus(); } });
+
+  function leaveLedger() {
+    closeMenu();
+    if (unsubExp) { unsubExp(); unsubExp = null; }
+    if (editing) endEdit();
+    writeSession(null);
+    all = []; loaded = false; catFilter = null; query = ""; $("q").value = ""; render();
+    mode = null; store = null;
+  }
+  $("amSignOut").addEventListener("click", () => {
+    const s = readSession();
+    leaveLedger();
+    $("siContact").value = s && s.contact ? s.contact : "";
+    authMsg("You've signed out.", "ok");
+    showAuthStep(remoteOk ? "signin" : "noremote");
+  });
+  $("amSwitch").addEventListener("click", () => {
+    leaveLedger();
+    authMsg("Your browser-only expenses stay here. Come back to them any time with \"Continue without an account\".", "");
+    showAuthStep(remoteOk ? "signin" : "noremote");
+  });
+
+  // ---- edit name (registered accounts)
+  $("amEdit").addEventListener("click", () => {
+    closeMenu();
+    $("nmInput").value = account.name || ""; $("nmMsg").textContent = "";
+    $("nameDlg").hidden = false; $("nmInput").focus(); $("nmInput").select();
+  });
+  const closeName = () => { $("nameDlg").hidden = true; $("acctBtn").focus({ preventScroll: true }); };
+  $("nmCancel").addEventListener("click", closeName);
+  $("nameDlg").addEventListener("click", (ev) => { if (ev.target === $("nameDlg")) closeName(); });
+  $("nameDlg").addEventListener("keydown", (ev) => { if (ev.key === "Escape") closeName(); });
+  $("fNameForm").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    const name = $("nmInput").value.trim().replace(/\s+/g, " ");
+    if (!name) { $("nmMsg").textContent = "Enter a name."; return; }
+    const b = $("nmSave"); b.disabled = true;
+    try {
+      await db.doc("accounts/" + acctId).update({ name, updatedAt: Date.now() });
+      account.name = name; renderAcct(); closeName();
+      msg(`Your name is now ${name}.`);
+    } catch (e) { $("nmMsg").textContent = "Couldn't save your name. Try again."; }
+    finally { b.disabled = false; }
+  });
+
+  // ---- boot
+  (async () => {
+    showAuthStep("loading");
+    [db, userCap] = await Promise.all([ledgerRuntime.use("db"), ledgerRuntime.use("user")]);
+    if (db) { try { await db.collection("accounts").limit(1).get(); remoteOk = true; } catch (e) { remoteOk = false; } }
+    const s = readSession();
+    if (s && s.mode === "guest") return enterGuest();
+    if (s && s.mode === "account" && remoteOk) { try { return await enterAccount(s.acctId); } catch (e) {} }
+    if (!remoteOk) { showAuthStep("noremote"); return; }
+    let count = 0;
+    try { count = (await listAccounts()).length; } catch (e) {}
+    showAuthStep(count ? "signin" : "signup");
+    if (count >= MAX_USERS) authMsg(`All ${MAX_USERS} registration places are taken. Registered users can sign in below; anyone else can continue without an account.`, "warn");
   })();
 })();
 </script>

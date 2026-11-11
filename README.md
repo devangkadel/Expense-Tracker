@@ -1,15 +1,22 @@
 # Monthly Expense Ledger
 
-A personal expense tracker for logging expenses by date, category, payment mode and amount, with an optional photo or PDF of the bill. For each month it shows the total, a category breakdown, a six-month trend and every line item. Everything can be downloaded as a PDF report or an Excel workbook.
+A personal expense tracker. You log expenses by date, category, payment mode and amount, with an optional photo or PDF of the bill. For each month it shows the total, an interactive category breakdown, a six-month trend and sortable line items. Everything can be downloaded as a PDF report or an Excel workbook.
+
+People can use it in two ways:
+
+- **Registered account (testing, max 10 users):** sign in with any email or mobile number and a demo code.
+- **Continue without an account:** start tracking straight away, with expenses saved in that browser.
+
+> **Testing version.** Sign-in codes are simulated and accounts aren't password-protected. Anyone who knows a registered email or number can open that account. Use dummy details and don't store anything sensitive.
 
 It comes in two editions built from the same code:
 
-| Edition | Where it runs | Where data is saved | Best for |
+| Edition | Where it runs | Registered accounts | Without an account |
 |---|---|---|---|
-| **Claude edition** | As a Claude artifact on claude.ai | The artifact's own database and file storage. Shared across your devices and with anyone you give access. | Day-to-day use |
-| **Standalone edition** (`index.html`) | Any browser or static host, e.g. GitHub Pages | Each visitor's own browser | Sharing for feedback, offline use |
+| **Hosted edition** <!-- Claude edition: runs as a Claude artifact on claude.ai --> | As a hosted web page | Shared storage: works from **any browser or computer** | This browser only |
+| **Standalone edition** (`index.html`) | Any browser or static host, e.g. GitHub Pages | **This browser only** (no shared database) | This browser only |
 
-**Live page (Claude edition):** https://claude.ai/artifact/7HFukCnBJdagkyExVfGnXh
+<!-- **Live page (Claude edition):** https://claude.ai/artifact/7HFukCnBJdagkyExVfGnXh -->
 
 ---
 
@@ -17,6 +24,7 @@ It comes in two editions built from the same code:
 
 - [Features](#features)
 - [Getting started](#getting-started)
+- [Accounts and sign-in](#accounts-and-sign-in)
 - [Using the ledger](#using-the-ledger)
 - [Categories](#categories)
 - [Payment modes](#payment-modes)
@@ -25,7 +33,7 @@ It comes in two editions built from the same code:
 - [Exports](#exports)
 - [How data is stored](#how-data-is-stored)
 - [Standalone edition and GitHub Pages](#standalone-edition-and-github-pages)
-- [Sharing and access](#sharing-and-access)
+- [Sharing and access (hosted edition)](#sharing-and-access-hosted-edition)
 - [Technical overview](#technical-overview)
 - [Known limitations](#known-limitations)
 - [Troubleshooting](#troubleshooting)
@@ -37,38 +45,89 @@ It comes in two editions built from the same code:
 
 | Area | What it does |
 |---|---|
-| Add expenses | Date, description, category, payment mode and amount, saved instantly |
+| Sign up / sign in | Email or mobile number plus a 6-digit demo code. Up to 10 registered users. |
+| Continue without an account | Track expenses without signing in, saved in this browser |
+| Account menu | Name, contact, user number, **Edit name**, **Sign out** |
+| Add expenses | Date, description, category, payment mode and amount |
 | Payment mode | Grouped dropdown: cash, cards, online, bank and other methods |
-| Bill / receipt upload | Attach a JPG, JPEG, PNG, WEBP or PDF of up to 2 MB to any expense |
-| View bills | Paperclip icon on the line item opens the bill in a viewer, with a Download button |
-| Edit expenses | Pencil icon loads an expense back into the form, including its bill |
-| Remove expenses | Two-click remove (click **Remove**, then **Confirm** within 3 seconds). Also deletes the bill. |
-| Month navigation | Step through months with ‹ ›. **This month** jumps back to the current month. |
-| Summary tiles | Total spent, change vs. previous month, daily average, largest category, entry count, biggest single expense |
-| Category breakdown | Interactive donut chart and ranked legend. Hover a category to pop out its slice and show its figures; click to filter line items. |
-| Six-month trend | Bar chart of monthly totals ending at the month shown. Click a bar to open that month. |
-| Line items | Date with weekday (e.g. *Mon, Nov 2*), description, category, payment mode and amount |
-| Sorting | Click any column heading to sort; click again to reverse. Your choice is remembered. |
-| Search and filter | Search box and category filter chip, with a live count and total of what's shown |
+| Bill / receipt upload | Attach a JPG, JPEG, PNG, WEBP or PDF of up to 2 MB |
+| View bills | Paperclip icon opens the bill in a viewer, with a Download button |
+| Edit / remove | Pencil icon to edit (including the bill); two-click remove |
+| Month navigation | ‹ › to step through months; **This month** jumps back |
+| Summary tiles | Total spent, change vs. previous month, daily average, largest category, entry count, biggest expense |
+| Category breakdown | Interactive donut: hover pops out a slice and shows its figures; click filters line items |
+| Six-month trend | Bar chart of monthly totals; click a bar to open that month |
+| Line items | Date with weekday (e.g. *Mon, Nov 2*), description, category, payment mode, amount |
+| Sorting | Click any column heading to sort; click again to reverse. Remembered. |
+| Search and filter | Search box, category filter chip, live count and total of what's shown |
 | Export | Download all data as **PDF** or **Excel (.xlsx)** |
 | Currency display | € EUR, $ USD, £ GBP, ₹ INR |
-| Themes | Follows light / dark mode automatically |
-| Responsive | Works on desktop, tablet and phone widths |
+| Themes and layout | Light / dark mode; works on desktop, tablet and phone |
 
 ---
 
 ## Getting started
 
-**Claude edition**
-1. Open the live page while signed in to claude.ai.
-2. Pick your currency in the top-right **Currency** selector.
-3. Add your first expense in **Add an expense**.
+**Hosted edition** <!-- Claude edition -->
+1. Open the live page while signed in<!-- to claude.ai -->. The owner must share it with you first.
+2. Choose **Create account**, **Sign in**, or **Continue without an account**.
 
 **Standalone edition**
-1. Open `index.html` in any modern browser (double-click it), or host it as shown in [Standalone edition and GitHub Pages](#standalone-edition-and-github-pages).
-2. It starts empty. Add your first expense.
+1. Open `index.html` in a modern browser (double-click it), or host it as shown in [Standalone edition and GitHub Pages](#standalone-edition-and-github-pages).
+2. Choose **Create account**, **Sign in**, or **Continue without an account**.
 
-No installation, account or configuration is needed for either edition.
+---
+
+## Accounts and sign-in
+
+### Creating an account
+
+1. Choose **Create account**, enter your name and an email address or mobile number. Dummy details are fine.<!-- e.g. `user1@test.com` -->
+2. A verification screen appears. In demo mode no message is sent; the code is shown on screen.
+3. Enter the code. You're signed in, and you stay signed in on that browser for 30 days or until you sign out.
+
+### Demo codes
+
+Each registered user gets a code based on their user number:
+
+| User | Code |
+|---|---|
+| 1 | `111111` |
+| 2 | `222222` |
+| 3 | `333333` |
+| … | … |
+| 9 | `999999` |
+| 10 | `000000` |
+
+After 5 wrong codes the attempt is cancelled and you start again.
+
+### Signing in
+
+Choose **Sign in**, enter the email or number you registered with, then the code. In the hosted edition<!-- Claude edition --> this works from any browser or computer, and you see the same expenses everywhere.
+
+- Email addresses are not case-sensitive.
+- For mobile numbers, the last 10 digits are matched, so `+91 98765 43210` and `9876543210` are the same account.
+
+### The 10-user limit
+
+Registration is capped at 10 accounts during testing (emails and mobile numbers count together). When all places are taken:
+
+- the sign-in screen says so;
+- anyone trying to sign up sees: *"Thanks for your interest! Registration is limited to 10 people during testing and every place is taken. You can still track expenses by choosing 'Continue without an account' below."*;
+- registered users can still sign in.
+
+### Continue without an account
+
+- Expenses are saved in the current browser only, and never reach the shared storage.
+- The account menu shows **Guest**, with **Sign in or create an account**. Your browser-only expenses stay there and come back the next time you choose *Continue without an account*.
+- Clearing browser data, or using a private window, deletes them.
+
+### Account menu
+
+Click your name (top right) to see your name, email or number, and user number, plus:
+
+- **Edit name:** changes the name shown on your account.
+- **Sign out:** returns to the sign-in screen on this browser.
 
 ---
 
@@ -83,13 +142,16 @@ No installation, account or configuration is needed for either edition.
 | Category | Yes | See [Categories](#categories) |
 | Payment mode | No | See [Payment modes](#payment-modes). Defaults to *Not specified*. |
 | Amount | Yes | Greater than zero, rounded to 2 decimals |
-| Bill / receipt | No | One file, JPG / JPEG / PNG / WEBP / PDF, 2 MB max. See [Bills and receipts](#bills-and-receipts). |
+| Bill / receipt | No | One file, JPG / JPEG / PNG / WEBP / PDF, 2 MB max |
 
-Click **Add expense**. If a bill is attached, the button shows **Uploading…** until the file is saved. If the date falls in a different month from the one on screen, the page jumps to that month. The new row briefly lights up in Line items. Category and payment mode stay selected after adding, which speeds up entering several similar expenses.
+Click **Add expense**. The new row briefly lights up in Line items. If the date falls in another month, the page jumps there. Category and payment mode stay selected for the next entry.
+
+### Editing and removing
+
+- **Edit:** click the pencil icon, change any field (including replacing or removing the bill), then **Save changes**. **Cancel** or **Esc** backs out.
+- **Remove:** click **Remove**, then **Confirm** within 3 seconds. The bill is deleted too.
 
 ### Sorting line items
-
-Click a column heading to sort by it. Click the same heading again to reverse the order. The arrow beside the heading shows the active column and direction.
 
 | Column | First click | Second click |
 |---|---|---|
@@ -99,92 +161,50 @@ Click a column heading to sort by it. Click the same heading again to reverse th
 | Paid via | A to Z | Z to A |
 | Amount | Highest first | Lowest first |
 
-- Expenses with no payment mode always sit at the bottom when sorting by **Paid via**.
-- Ties are broken by date, newest first.
-- The sort is remembered in your browser for next time.
+Expenses without a payment mode always sit at the bottom of **Paid via**. Ties are broken by date, newest first. The sort is remembered in your browser.
 
 ### Searching and filtering
 
-- **Search** (above the table) matches description, category, payment mode, amount and date within the month shown.
-- **Category filter:** click a slice of the donut chart, or a category in its legend, to show only that category's line items. A chip with **×** appears next to the search box to clear it. Click the same category again to clear it too.
-- The text at the right of the toolbar shows the result, e.g. *6 of 30 shown · ₹1,131.00*, or the month's entry count and total when nothing is filtered.
+- **Search** matches description, category, payment mode, amount and date within the month shown.
+- **Category filter:** click a donut slice or legend row to show only that category. Clear it with the chip's **×** or by clicking the category again.
+- The toolbar shows the result, e.g. *6 of 30 shown · ₹1,131.00*.
 - Search and filter only change what's on screen. Downloads always include everything.
 
 ### Exploring the charts
 
-- **Hover** (or Tab to) a category in the donut chart or its legend. Its slice pops out, the others fade, and the centre shows that category's name, amount and share of the month.
-- **Click** a category to filter line items (see above).
-- **Click** a bar in **Last six months**, or press Enter on it, to open that month.
-- **This month**, next to the month arrows, appears whenever you're viewing another month and brings you back.
-
-### Editing an expense
-
-1. In **Line items**, click the pencil icon on the row.
-2. The form switches to **Edit expense**, is highlighted, and the row is shaded.
-3. Change any field. For the bill you can:
-   - keep it (shown as *filename (attached)*),
-   - replace it with **Replace**,
-   - remove it with **×**.
-4. Click **Save changes**, or **Cancel** / **Esc** to leave it unchanged.
-
-### Removing an expense
-
-Click **Remove**, then **Confirm** within 3 seconds. The expense and its attached bill are both permanently deleted.
-
-### Example entries
-
-If sample entries tagged **example** are present, a **Remove example entries** link appears in the Line items header (click it twice to confirm).
+- **Hover** (or Tab to) a category: its slice pops out, others fade, and the centre shows its name, amount and share.
+- **Click** a bar in **Last six months** (or press Enter on it) to open that month.
+- **This month** appears whenever you're viewing another month.
 
 ### Reading the summary
 
-- **Total spent** is the sum for the month shown. The line underneath compares it with the previous month (red = higher spending, green = lower).
-- **Daily average** divides the total by the days elapsed so far (current month) or by all days (past months). Future months show "—".
-- **Largest category** is the category with the highest total and its share of the month.
-- **Entries** is the number of expenses, plus the biggest single one.
+- **Total spent:** the month's sum, with the change vs. last month (red = higher, green = lower).
+- **Daily average:** total divided by days so far (current month) or all days (past months).
+- **Largest category:** top category and its share.
+- **Entries:** count, plus the biggest single expense.
 
 ---
 
 ## Categories
 
-| # | Category |
-|---|---|
-| 1 | Housing |
-| 2 | Groceries |
-| 3 | Dining out |
-| 4 | Transport |
-| 5 | Utilities |
-| 6 | Health |
-| 7 | Entertainment |
-| 8 | Shopping |
-| 9 | Subscriptions |
-| 10 | Miscellaneous |
-| 11 | Other |
+Housing · Groceries · Dining out · Transport · Utilities · Health · Entertainment · Shopping · Subscriptions · Miscellaneous · Other
 
-Each category has a fixed color, used in both the chart and the line-item chips, in light and dark themes.
+Each category has a fixed color in the chart and line-item chips, in light and dark themes.
 
 ---
 
 ## Payment modes
 
-| Group | Option in the dropdown | Saved as |
+| Group | Option | Saved as |
 |---|---|---|
 | — | Not specified | *(empty)* |
 | — | Cash | `Cash` |
-| Cards | Debit card | `Debit card` |
-| Cards | Credit card | `Credit card` |
-| Cards | Prepaid / forex card | `Prepaid card` |
-| Online | UPI | `UPI` |
-| Online | Net banking | `Net banking` |
-| Online | Mobile wallet | `Mobile wallet` |
+| Cards | Debit card / Credit card / Prepaid / forex card | `Debit card` / `Credit card` / `Prepaid card` |
+| Online | UPI / Net banking / Mobile wallet | `UPI` / `Net banking` / `Mobile wallet` |
 | Bank | Bank transfer (NEFT / RTGS / IMPS) | `Bank transfer` |
 | Bank | Auto-debit (EMI / standing instruction) | `Auto-debit` |
-| Bank | Cheque | `Cheque` |
-| Bank | Demand draft | `Demand draft` |
-| Other | Pay later / BNPL | `Pay later` |
-| Other | Gift card / voucher | `Gift card / voucher` |
-| Other | Other | `Other` |
-
-The payment mode shows in the **Paid via** column, and both exports summarize spending by payment mode. Expenses saved before payment mode existed show "—" until edited.
+| Bank | Cheque / Demand draft | `Cheque` / `Demand draft` |
+| Other | Pay later / BNPL / Gift card / voucher / Other | `Pay later` / `Gift card / voucher` / `Other` |
 
 ---
 
@@ -196,19 +216,18 @@ The payment mode shows in the **Paid via** column, and both exports summarize sp
 | Maximum size | 2 MB per file |
 | Files per expense | 1 |
 
-- Files that are too large, empty or in another format are refused before upload, with a message saying why.
-- Click the **paperclip** icon on a line item to open the bill:
-  - **Images** show inside the viewer.
-  - **PDFs** show inside the viewer in the standalone edition. In the Claude edition they open in a new tab or download.
-- **Download** in the viewer saves the original file.
-- Close the viewer with **×**, **Esc**, or a click outside it.
-- Phone camera photos (HEIC) aren't accepted. Most phones can share or save a photo as JPG.
+- Files that are too large, empty or in another format are refused, with a message saying why.
+- **Images** open inside the viewer.
+- **PDFs** open inside the viewer in the standalone edition. In the hosted edition<!-- Claude edition --> they open in a new tab or download.
+- HEIC phone photos aren't accepted; save or share them as JPG.
+- **Hosted edition:**<!-- Claude edition --> only people with **Editor** access can upload bills. Others can view existing bills.
+- **Standalone edition:** anyone can upload; bills are kept in that browser.
 
 ---
 
 ## Currency
 
-The **Currency** selector changes the symbol shown, not the stored numbers. No exchange rates are applied. It's a display preference saved in your browser.
+The selector changes the symbol only. No conversion is applied, and the choice is saved per browser.
 
 | Option | Symbol in page and Excel | Code in PDF |
 |---|---|---|
@@ -221,35 +240,41 @@ The **Currency** selector changes the symbol shown, not the stored numbers. No e
 
 ## Exports
 
-The **Download PDF** and **Download Excel** buttons sit in the **Line items** header. Both export **every month**, not only the one on screen. Files are named `expense-ledger-YYYY-MM-DD.pdf` / `.xlsx`.
-
-The exports list bill file names but don't include the bill files themselves. Download those from the viewer.
+**Download PDF** and **Download Excel** (Line items header) export **every month** of the ledger you're in: your account's, or your browser-only one. Files are named `expense-ledger-YYYY-MM-DD.pdf` / `.xlsx`. Bill file names are listed, but the files themselves aren't bundled.
 
 ### PDF report (A4)
 
-1. Title, date range covered, currency and export date
-2. Headline tiles: total spent, number of expenses, number of months, largest category
-3. **Spending by month**: entries and total per month, with a grand total
-4. **Spending by category**: entries, total and share
-5. **Spending by payment mode**: entries, total and share
-6. **All expenses**: grouped by month (newest first) with date, day, description, category, paid via and amount. Expenses with an attached bill are marked **[bill]**.
-7. Page numbers on every page
+1. Title, date range, currency and export date
+2. Headline tiles: total spent, expenses, months, largest category
+3. Spending by month, by category, and by payment mode
+4. All expenses grouped by month (newest first): date, day, description, category, paid via, amount; **[bill]** marks attachments
+5. Page numbers
 
 ### Excel workbook
 
 | Sheet | Contents |
 |---|---|
-| Expenses | Date, Day, Month, Description, Category, Payment mode, Amount, Bill / receipt (file name). Real Excel dates, currency formatting, column filters, and a `SUM` total row. |
-| By month | Entries and total per month, with `SUM` totals |
-| By category | Entries, total and share (%) per category |
-| By payment mode | Entries, total and share (%) per payment mode |
-| Month x category | Grid of months × categories with row totals |
+| Expenses | Date, Day, Month, Description, Category, Payment mode, Amount, Bill / receipt. Real dates, currency format, filters, `SUM` total. |
+| By month | Entries and total per month |
+| By category | Entries, total and share |
+| By payment mode | Entries, total and share |
+| Month x category | Months × categories grid with totals |
 
 ---
 
 ## How data is stored
 
-Each expense is one document:
+### Records
+
+| Record | Path | Contents |
+|---|---|---|
+| Account | `accounts/<accountId>` | `seq` (user number), `name`, `kind` (`email` / `mobile`), `hash` (SHA-256 fingerprint of the email or number, used to look it up), `masked` (a partly hidden copy of the email or number<!-- e.g. `us•••@test.com` -->), `createdAt` |
+| Registered user's expense | `ledgers/<accountId>/expenses/<expenseId>` | See below |
+| Guest expense | Browser `localStorage`, key `expense-ledger:guest:expenses` | See below |
+
+The full email or number isn't stored in the shared records. Only the fingerprint and a masked version are, plus the full value in the signed-in browser's session.
+
+### Expense document
 
 ```json
 {
@@ -259,76 +284,53 @@ Each expense is one document:
   "category": "Groceries",
   "payment": "UPI",
   "amount": 86.4,
-  "receipt": {
-    "id": "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6",
-    "name": "dmart-bill.jpg",
-    "type": "image/jpeg",
-    "size": 482113
-  },
+  "receipt": { "id": "a1b2c3…", "name": "dmart-bill.jpg", "type": "image/jpeg", "size": 482113 },
   "createdAt": 1793620403436,
   "updatedAt": 1793948764000
 }
 ```
 
-| Field | Type | Notes |
-|---|---|---|
-| `date` | string `YYYY-MM-DD` | Date of the expense |
-| `month` | string `YYYY-MM` | Derived from `date`. Used to group by month. |
-| `desc` | string | Up to 80 characters |
-| `category` | string | One of the categories above |
-| `payment` | string or `null` | One of the saved values above. Missing on older entries. |
-| `amount` | number | Two-decimal value, no currency attached |
-| `receipt` | object or `null` | Pointer to the stored bill: `id`, original `name`, MIME `type`, `size` in bytes |
-| `createdAt` | number (ms since epoch) | Set when added |
-| `updatedAt` | number (ms since epoch) | Set when edited (optional) |
-| `example` | boolean | Only on sample entries (optional) |
+`payment`, `receipt` and `updatedAt` are optional.
 
 ### Where each edition keeps it
 
-| | Claude edition | Standalone edition |
+| | Hosted edition<!-- Claude edition --> | Standalone edition |
 |---|---|---|
-| Expenses | Artifact database, collection `expenses` | Browser `localStorage`, key `expense-ledger:v1:expenses` |
-| Bill files | Artifact file storage, served at `/_blob/<id>` | Browser IndexedDB, database `expense-ledger`, store `receipts` |
-| Currency and sort choice | Browser `localStorage` (keys `cur`, `sort`) | Browser `localStorage` (keys `cur`, `sort`) |
-| Shared across devices | Yes | No |
-| Live updates between open tabs | Yes | Yes (same browser) |
-
-Bills are uploaded before the expense is saved, so an expense never points at a missing file. If saving fails, the just-uploaded file is cleaned up.
+| Accounts and registered users' expenses | Hosted database<!-- artifact database --> (shared by everyone with access) | Browser `localStorage`, key `expense-ledger:standalone:db:v1` |
+| Guest expenses | Browser `localStorage` | Browser `localStorage` |
+| Bill files | Hosted file storage<!-- artifact file storage, served at /_blob/<id> --> | Browser IndexedDB `expense-ledger` → `receipts` |
+| Sign-in session | Browser `localStorage`, key `ledger-session:v2` (30 days) | Same |
+| Currency and sort | Browser `localStorage` (`cur`, `sort`) | Same |
 
 ---
 
 ## Standalone edition and GitHub Pages
 
-`index.html` is a single file with no server, build step or account needed. It starts empty, and each visitor gets their own private ledger in their browser.
+`index.html` is a single file with no server or build step. It uses the same code as the hosted edition<!-- Claude edition -->, with a small built-in adapter that stores everything in the browser.
+
+**What's different:** there's no shared database, so a registered account only exists in the browser where it was created. Signing in with the same email on another computer won't find it. The 10-user limit is also counted per browser. To make accounts work across browsers and computers on GitHub Pages, the adapter can be replaced with a hosted database (for example, the free tiers of Firebase or Supabase).
 
 ### Publish on GitHub Pages (free)
 
-1. On github.com, create a new **public** repository, e.g. `expense-ledger`. Pages on private repositories needs a paid plan.
-2. **Add file → Upload files**, upload `index.html` (keep that name) and this `README.md`, then commit.
-3. Go to **Settings → Pages**, choose **Deploy from a branch**, branch **main**, folder **/(root)**, and click **Save**.
-4. After a minute or two the page is live at `https://<your-username>.github.io/expense-ledger/`.
+1. Create a **public** repository on github.com, e.g. `expense-ledger`. Pages on private repos needs a paid plan.
+2. **Add file → Upload files**, upload `index.html` (keep that name) and `README.md`, then commit.
+3. Go to **Settings → Pages**, choose **Deploy from a branch**, **main**, **/(root)**, then **Save**.
+4. After a minute or two it's live at `https://<your-username>.github.io/expense-ledger/`.
 
 ### Collecting feedback
 
-- Testers with a GitHub account can leave comments in the repository's **Issues** tab.
-- A tester can send an Excel or PDF export to show exactly what they entered.
-
-### What testers should know
-
-- Data stays in their browser only. Nothing is sent to you or anyone else.
-- Clearing browser data, or using a private window, deletes their expenses and bills. A banner warns them when the browser is blocking storage.
-- Data doesn't move between browsers or devices.
+- Testers with a GitHub account can comment in the repo's **Issues** tab.
+- A tester can send an Excel or PDF export to show what they entered.
 
 ---
 
-## Sharing and access (Claude edition)
+<!-- Claude edition -->
+## Sharing and access (hosted edition)
 
-- The ledger is **private** by default: only the owner can open it.
-- To share it, use the **Share** menu on the artifact page. Because it stores bill files, it can be shared within your organization but not through a public link.
-- **Contributors** and above can add, edit and remove entries.
-- **Editors** and the owner can upload bills. Others can view existing bills but won't see the upload field.
-- **Viewers** and **Commenters** can see the data but can't change it.
-- Everyone with access sees the same expenses. There are no per-person ledgers.
+- The page is **private** to its owner until shared from the **Share** menu. It can be shared within the owner's organization, not by public link.
+- Give testers **Contributor** access so they can register and save expenses. **Viewers** can only use *Continue without an account*.
+- **Editors** can also upload bills.
+- Because accounts aren't password-protected, anyone with access can open any registered account if they know its email or number.
 
 ---
 
@@ -336,39 +338,43 @@ Bills are uploaded before the expense is saved, so an expense never points at a 
 
 | Piece | Details |
 |---|---|
-| Format | Single self-contained HTML page (markup, CSS and JS in one file) |
-| Charts | Hand-drawn inline SVG. No chart library. |
-| Excel export | [SheetJS](https://sheetjs.com/) `xlsx` 0.18.5 |
-| PDF export | [jsPDF](https://github.com/parallax/jsPDF) 2.5.1 + [jspdf-autotable](https://github.com/simonbengtsson/jsPDF-AutoTable) 3.8.2 |
-| Library loading | Only when exporting, from cdnjs with jsDelivr as fallback |
-| Fonts | Instrument Sans (text) and Spline Sans Mono (numbers) from Google Fonts, with system fallbacks |
-| Theming | CSS custom properties with light/dark variants |
+| Format | Single self-contained HTML page |
+| Sign-in | Mock OTP. Email/number matched by SHA-256 fingerprint (Web Crypto). |
+| Charts | Hand-drawn inline SVG |
+| Excel export | SheetJS `xlsx` 0.18.5 |
+| PDF export | jsPDF 2.5.1 + jspdf-autotable 3.8.2 |
+| Library loading | On first export, from cdnjs with jsDelivr as fallback |
+| Fonts | Instrument Sans and Spline Sans Mono (Google Fonts), with system fallbacks |
 
-**Claude edition capabilities:**
+<!--
+**Claude edition (artifact) capabilities:**
 
 ```json
-{ "db": {}, "downloads": true, "assets": {} }
+{
+  "db": { "rules": [
+    { "path": "", "read": "interact", "write": "interact" },
+    { "path": "data/users/{self}", "read": "interact", "write": "interact" }
+  ] },
+  "user": {}, "downloads": true, "assets": {}
+}
 ```
+-->
 
-- `db`: expense records
-- `assets`: bill files
-- `downloads`: PDF / Excel / bill downloads
-
-**Standalone edition:** the same code with small adapters that use `localStorage` for expenses, IndexedDB for bills, and the browser's native file download.
+**Standalone edition:** a built-in storage adapter<!-- window.claude --> backed by `localStorage` (records) and IndexedDB (bills), with native browser downloads.
 
 ---
 
 ## Known limitations
 
-- **No currency conversion.** Switching currency only changes the symbol.
-- **PDF uses currency codes.** The PDF's built-in font can't display symbols like ₹, so amounts read e.g. `INR 26,000.00`.
-- **One bill per expense**, 2 MB max. HEIC photos aren't accepted.
-- **Exports don't bundle bill files.** Download bills individually from the viewer.
-- **Fixed category and payment mode lists.** Changes need a code update.
-- **No recurring expenses, budgets, income or split payments** yet.
-- **No import** from CSV or Excel yet.
-- **Exports need internet access** to load the PDF/Excel libraries on first use.
-- **Standalone edition** data is per browser and can be lost if browser data is cleared. Export regularly as a backup.
+- **No real security (testing only).** Codes are simulated and shown on screen; anyone who knows a registered email or number can open that account.
+- **Standalone accounts don't sync.** On GitHub Pages / local file, everything stays in that browser until a hosted database is connected.
+- **Guest expenses can't be moved** into an account yet.
+- **No account deletion or contact change** from the page yet.
+- **No currency conversion**; the PDF uses currency codes (e.g. `INR 26,000.00`).
+- One bill per expense, 2 MB max; HEIC not accepted; exports don't bundle bill files.
+- Fixed category and payment mode lists.
+- No recurring expenses, budgets, income or import yet.
+- Exports need internet access on first use to load the PDF/Excel libraries.
 
 ---
 
@@ -376,21 +382,19 @@ Bills are uploaded before the expense is saved, so an expense never points at a 
 
 | Problem | What to do |
 |---|---|
-| "Bills must be 2 MB or smaller" | Compress the image, crop it, or take the photo at a lower resolution |
-| "isn't a supported file" | Save or convert the bill to JPG, PNG, WEBP or PDF |
-| Bill / receipt field missing (Claude edition) | Only people who can edit the artifact can upload. Ask the owner for Editor access. |
-| "Couldn't upload the file" | Check your connection and try again |
-| "Attachment storage is full" | Remove old expenses with bills you no longer need |
-| PDF bill doesn't open inside the page (Claude edition) | Expected. Use **Open in new tab** or **Download** in the viewer. |
-| "This file couldn't be found" | The bill was deleted, or browser data was cleared (standalone edition) |
-| "Saving isn't available in this view" | Open the Claude edition directly while signed in to claude.ai |
-| Storage warning banner (standalone edition) | You're in a private window or storage is blocked. Use a normal window. |
-| Download buttons don't appear | Open the artifact page directly rather than in a preview |
-| "Couldn't load the export tools" | Check your internet connection or ad/script blocker, then try again |
-| "A download prompt is already open" | Accept or dismiss the open prompt first |
+| "We couldn't find an account for that email or number" | Check for typos, or create an account. In the standalone edition, accounts only exist in the browser where they were made. |
+| "That code isn't right" | Use the code shown on the verification screen (user 1 → 111111, and so on) |
+| "Too many incorrect codes" | Start again from Sign in |
+| "That email or number is already registered" | Sign in with it instead |
+| Registration limit message | All 10 places are taken. Use *Continue without an account*. |
+| Guest expenses missing | They're saved per browser. Use the same browser, not a private window, and don't clear site data. |
+| "Registration isn't available in this view" (hosted edition) | Open the page directly while signed in<!-- to claude.ai -->, with at least Contributor access |
+| Bill field missing (hosted edition) | Only Editors can upload bills |
+| "Bills must be 2 MB or smaller" | Compress or crop the image |
+| "isn't a supported file" | Convert to JPG, PNG, WEBP or PDF |
+| "No expenses match" | Clear the search box or the category chip |
+| "Couldn't load the export tools" | Check your connection or script blocker, then retry |
 | "That expense no longer exists" while editing | It was removed in another tab or device |
-| "No expenses match" | Clear the search box, or click the category chip's **×** |
-| Line items in an unexpected order | Check which column heading shows the active arrow, and click it to change direction |
 
 ---
 
@@ -398,8 +402,10 @@ Bills are uploaded before the expense is saved, so an expense never points at a 
 
 | Version | Date | Changes |
 |---|---|---|
-| 5 | 2026-11-11 | **Sortable columns** (ascending/descending, remembered). **Interactive donut**: hover pops out a slice and shows its figures; click filters line items. **Search box**, category filter chip, and live count/total. Clickable trend bars and **This month** button. Row hover and add/edit highlight. Keyboard support for chart and trend. |
-| 4 | 2026-11-07 | **Payment mode** dropdown (15 options in 5 groups) and **Paid via** column. **Bill / receipt upload** (JPG, JPEG, PNG, WEBP, PDF, 2 MB max) with viewer and download. Payment-mode summaries in PDF and Excel. Bill file names in Excel. Dropdown arrows kept inside their fields. Standalone `index.html` edition for GitHub Pages. |
-| 3 | 2026-11-06 | PDF and Excel export of all data. Pencil-icon editing. Redesigned currency selector. Weekday shown in line-item dates. |
-| 2 | 2026-11-02 | Added **Miscellaneous** category |
-| 1 | 2026-10-29 | First release: add/remove expenses, monthly summary, category donut, six-month trend, line items, currency selector, example entries |
+| 7 | 2026-11-12 | **Test accounts**: sign up / sign in with any email or mobile plus demo code (10 users max, works across browsers in the hosted edition<!-- Claude edition -->). **Continue without an account** (browser-only). Edit name, sign out, guest menu. Friendly limit message. Standalone edition updated with a browser-storage adapter. |
+| 6 | 2026-11-11 | First sign-in version (tied to the hosting platform's user accounts<!-- claude.ai accounts -->); superseded by version 7. |
+| 5 | 2026-11-11 | Sortable columns; interactive donut with hover and click-to-filter; search, filter chip and live totals; clickable trend bars; **This month** button; row highlights; keyboard support. |
+| 4 | 2026-11-07 | Payment mode dropdown and **Paid via** column; bill / receipt upload (2 MB) with viewer; payment-mode summaries in exports; dropdown arrow fix; standalone `index.html`. |
+| 3 | 2026-11-06 | PDF and Excel export; pencil-icon editing; redesigned currency selector; weekday in dates. |
+| 2 | 2026-11-02 | Added **Miscellaneous** category. |
+| 1 | 2026-10-29 | First release: add/remove expenses, monthly summary, category donut, six-month trend, line items, currency selector, example entries. |
