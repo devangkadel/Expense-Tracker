@@ -20,6 +20,8 @@
   --good: #1f7a4a;
   --bad: #b3402a;
   --field: #fbfcfb;
+  --row-hover: #f2f6f4;
+  --ease: cubic-bezier(.2, .7, .2, 1);
   --c1: #1f6b57; --c2: #d08a2e; --c3: #3d62b5; --c4: #b5476b; --c5: #6f8f2a;
   --c6: #7a55b0; --c7: #2a8fa6; --c8: #c4573a; --c9: #8a7a5c; --c10: #a3683f; --c11: #8f9993;
   --font-ui: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -29,7 +31,7 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #121715; --panel: #1a211e; --ink: #e6ece9; --muted: #9aa8a1; --line: #2c3632;
-    --accent: #5cc4a2; --accent-soft: #1d3a31; --good: #63c98f; --bad: #f08a70; --field: #151b18;
+    --accent: #5cc4a2; --accent-soft: #1d3a31; --good: #63c98f; --bad: #f08a70; --field: #151b18; --row-hover: #1f2825;
     --c1: #5cc4a2; --c2: #e7a650; --c3: #7f9df0; --c4: #e27a9c; --c5: #a6c95a;
     --c6: #ad8ce6; --c7: #5fc0d6; --c8: #ec8a6a; --c9: #c2b08a; --c10: #d39a6e; --c11: #7d8a84;
     color-scheme: dark;
@@ -37,7 +39,7 @@
 }
 :root[data-theme="dark"] {
   --bg: #121715; --panel: #1a211e; --ink: #e6ece9; --muted: #9aa8a1; --line: #2c3632;
-  --accent: #5cc4a2; --accent-soft: #1d3a31; --good: #63c98f; --bad: #f08a70; --field: #151b18;
+  --accent: #5cc4a2; --accent-soft: #1d3a31; --good: #63c98f; --bad: #f08a70; --field: #151b18; --row-hover: #1f2825;
   --c1: #5cc4a2; --c2: #e7a650; --c3: #7f9df0; --c4: #e27a9c; --c5: #a6c95a;
   --c6: #ad8ce6; --c7: #5fc0d6; --c8: #ec8a6a; --c9: #c2b08a; --c10: #d39a6e; --c11: #7d8a84;
   color-scheme: dark;
@@ -47,6 +49,7 @@ body { margin: 0; }
 img { max-width: 100%; }
 [hidden] { display: none !important; }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body { background: var(--bg); color: var(--ink); font-family: var(--font-ui); font-size: 15px; line-height: 1.5; }
 .wrap { max-width: 1120px; margin-inline: auto; padding-block: 28px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 20px; }
 .num { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
@@ -103,6 +106,7 @@ form.entry { display: grid; grid-template-columns: 10rem minmax(0, 1.7fr) minmax
 .btn.secondary { background: transparent; color: var(--ink); border-color: var(--line); }
 .btn.secondary:hover { border-color: var(--accent); filter: none; }
 .actions { display: flex; gap: 8px; }
+.a-file[hidden] ~ .actions { margin-bottom: 0; }
 .card.is-editing { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
 .formmsg { margin: 0; font-size: 0.85rem; min-height: 1.3em; color: var(--muted); }
 .formmsg.err { color: var(--bad); }
@@ -171,7 +175,6 @@ td.r, th.r { text-align: right; }
 .ico { width: 30px; height: 30px; display: inline-grid; place-items: center; border: 1px solid transparent; border-radius: 6px; background: none; color: var(--muted); cursor: pointer; padding: 0; }
 .ico:hover { color: var(--accent); border-color: var(--line); }
 .ico svg { width: 15px; height: 15px; }
-tr.editing td { background: var(--accent-soft); }
 .daytag { color: var(--muted); }
 .exp { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
 .ghost { height: 32px; padding: 0 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--ink); font: inherit; font-size: 0.85rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
@@ -184,6 +187,73 @@ tr.editing td { background: var(--accent-soft); }
 .tabhead { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px; }
 .linkbtn { border: none; background: none; color: var(--accent); cursor: pointer; font: inherit; font-size: 0.85rem; padding: 0; text-decoration: underline; text-underline-offset: 2px; }
 .banner { padding: 10px 14px; border-radius: 8px; background: var(--accent-soft); font-size: 0.9rem; }
+
+/* ---- interaction polish ---- */
+.ghost.sm { height: 34px; font-size: 0.8rem; }
+.iconbtn, .ghost, .btn, .pick, .ico, .del, .curwrap { transition: border-color .15s, color .15s, background-color .15s, filter .15s; }
+
+/* donut + legend */
+.donut .seg { cursor: pointer; }
+.donut.hl .seg { opacity: .3; }
+.donut .seg.on { opacity: 1; transform: translate(var(--dx, 0px), var(--dy, 0px)); }
+.donut circle.seg.on { stroke-width: 32; transform: none; }
+.donut .seg.sel { opacity: 1; }
+.donut .clabel { fill: var(--muted); font-family: var(--font-ui); font-size: 10.5px; letter-spacing: 0.06em; }
+.donut .camt { fill: var(--ink); font-family: var(--font-num); font-weight: 500; }
+.donut .csub { fill: var(--muted); font-family: var(--font-num); font-size: 10.5px; }
+.legend li { cursor: pointer; border-radius: 6px; margin: -4px -6px; padding: 4px 6px; transition: background-color .15s, opacity .15s; }
+.legend li:hover, .legend li.on { background: var(--row-hover); }
+.legend.hl li:not(.on) { opacity: .55; }
+.legend li.sel { background: var(--accent-soft); }
+.legend li.sel .name { font-weight: 600; }
+.legend li:focus-visible { outline: 2px solid var(--accent); outline-offset: 0; }
+.legend li.empty-l { cursor: default; background: none; }
+.hinttxt { margin: 14px 0 0; font-size: 0.78rem; color: var(--muted); }
+@media (prefers-reduced-motion: no-preference) {
+  .donut .seg { transition: transform .22s var(--ease), opacity .2s, stroke-width .22s var(--ease); }
+}
+
+/* trend bars */
+.trend .tm { cursor: pointer; }
+.trend .tm .hit { fill: transparent; }
+.trend .tm:hover rect.b:not(.cur) { fill: var(--muted); opacity: .45; }
+.trend .tm:hover text { fill: var(--ink); }
+.trend .tm:focus-visible { outline: none; }
+.trend .tm:focus-visible rect.hit { stroke: var(--accent); stroke-width: 2; rx: 6px; }
+
+/* table toolbar */
+.tbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 0 0 10px; }
+.search { position: relative; flex: 1 1 14rem; max-width: 22rem; min-width: 0; }
+.search svg { position: absolute; left: 10px; top: 50%; width: 14px; height: 14px; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+.search input { width: 100%; height: 34px; padding: 0 10px 0 30px; border: 1px solid var(--line); border-radius: 8px; background: var(--field); color: var(--ink); font: inherit; font-size: 0.88rem; }
+.search input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.fchip { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 6px 0 10px; border: 1px solid var(--accent); border-radius: 999px; background: var(--accent-soft); color: var(--ink); font: inherit; font-size: 0.82rem; font-weight: 600; cursor: pointer; }
+.fchip .sw { width: 8px; height: 8px; border-radius: 50%; }
+.fchip .x { width: 18px; height: 18px; display: inline-grid; place-items: center; border-radius: 50%; color: var(--muted); }
+.fchip:hover .x { background: var(--panel); color: var(--ink); }
+.tsum { margin-left: auto; font-size: 0.82rem; color: var(--muted); white-space: nowrap; }
+.tsum b { color: var(--ink); font-weight: 600; font-family: var(--font-num); }
+
+/* sortable headers */
+th.sortable { padding: 0; }
+.sortbtn { display: flex; align-items: center; gap: 6px; width: 100%; padding: 8px 10px; border: 0; background: none; color: inherit; font: inherit; text-transform: inherit; letter-spacing: inherit; cursor: pointer; text-align: inherit; white-space: nowrap; }
+.sortbtn:hover { color: var(--ink); }
+th.r .sortbtn { justify-content: flex-end; }
+.si { flex: none; display: inline-grid; gap: 2px; }
+.si::before, .si::after { content: ""; display: block; border-left: 3.5px solid transparent; border-right: 3.5px solid transparent; opacity: .35; }
+.si::before { border-bottom: 4px solid currentColor; }
+.si::after { border-top: 4px solid currentColor; }
+th[aria-sort="ascending"], th[aria-sort="descending"] { color: var(--ink); }
+th[aria-sort="ascending"] .si::before, th[aria-sort="descending"] .si::after { opacity: 1; border-top-color: var(--accent); border-bottom-color: var(--accent); }
+
+/* rows */
+tbody tr:hover td { background: var(--row-hover); }
+tbody tr.editing td { background: var(--accent-soft); }
+td .amt-cell { font-weight: 500; }
+@media (prefers-reduced-motion: no-preference) {
+  tbody tr.flash td { animation: rowflash 1.8s var(--ease); }
+  @keyframes rowflash { 0%, 30% { background: var(--accent-soft); } 100% { background: transparent; } }
+}
 </style>
 </head>
 <body>
@@ -198,6 +268,7 @@ tr.editing td { background: var(--accent-soft); }
         <button class="iconbtn" id="prev" aria-label="Previous month">‹</button>
         <div class="label" id="monthLabel">—</div>
         <button class="iconbtn" id="next" aria-label="Next month">›</button>
+        <button class="ghost sm" id="todayBtn" type="button" hidden>This month</button>
       </div>
       <div class="curwrap">
         <label for="cur">Currency</label>
@@ -280,10 +351,11 @@ tr.editing td { background: var(--accent-soft); }
         <svg class="donut" id="donut" viewBox="0 0 180 180" role="img" aria-label="Spending by category"></svg>
         <ul class="legend" id="legend"></ul>
       </div>
+      <p class="hinttxt" id="bdHint" hidden>Hover over a category for details. Click one to show only its line items.</p>
     </section>
     <section class="card trend" aria-labelledby="trTitle">
       <h2 id="trTitle">Last six months</h2>
-      <p class="note">Total spending per month, ending with the month shown.</p>
+      <p class="note">Total spending per month, ending with the month shown. Click a bar to open that month.</p>
       <svg id="trend" viewBox="0 0 480 220" role="img" aria-label="Monthly totals"></svg>
     </section>
   </div>
@@ -299,11 +371,26 @@ tr.editing td { background: var(--accent-soft); }
         </span>
       </div>
     </div>
-    <p class="note" id="tbNote">Every expense recorded for the month, newest first. Downloads include every month, not only the one shown.</p>
+    <p class="note" id="tbNote">Every expense recorded for the month. Click a column heading to sort. Downloads include every month, not only the one shown.</p>
     <p class="expmsg" id="expMsg" aria-live="polite" hidden></p>
+    <div class="tbar">
+      <div class="search">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3"/></svg>
+        <input id="q" type="search" placeholder="Search this month" aria-label="Search line items" autocomplete="off">
+      </div>
+      <button class="fchip" id="catChip" type="button" hidden aria-label="Clear category filter"><span class="sw" id="catChipSw"></span><span id="catChipTxt"></span><span class="x" aria-hidden="true">×</span></button>
+      <span class="tsum" id="tSum" aria-live="polite"></span>
+    </div>
     <div class="tablebox">
       <table>
-        <thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Paid via</th><th class="r">Amount</th><th class="r"><span class="sr" aria-hidden="true"></span></th></tr></thead>
+        <thead id="thead"><tr>
+          <th class="sortable" data-sort="date" aria-sort="descending"><button class="sortbtn" type="button">Date<span class="si" aria-hidden="true"></span></button></th>
+          <th class="sortable" data-sort="desc" aria-sort="none"><button class="sortbtn" type="button">Description<span class="si" aria-hidden="true"></span></button></th>
+          <th class="sortable" data-sort="category" aria-sort="none"><button class="sortbtn" type="button">Category<span class="si" aria-hidden="true"></span></button></th>
+          <th class="sortable" data-sort="payment" aria-sort="none"><button class="sortbtn" type="button">Paid via<span class="si" aria-hidden="true"></span></button></th>
+          <th class="sortable r" data-sort="amount" aria-sort="none"><button class="sortbtn" type="button">Amount<span class="si" aria-hidden="true"></span></button></th>
+          <th class="r"><span class="vh">Actions</span></th>
+        </tr></thead>
         <tbody id="rows"></tbody>
       </table>
     </div>
@@ -331,6 +418,41 @@ tr.editing td { background: var(--accent-soft); }
   let db = null;
   let loaded = false;
 
+  /* ---------- line-item view state: sort, category filter, search ---------- */
+  const txt = (s) => (s || "").toString();
+  const byText = (k) => (a, b) => txt(a[k]).localeCompare(txt(b[k]), "en", { sensitivity: "base", numeric: true });
+  const SORTS = {
+    date: { label: "date", def: "desc", asc: "oldest first", desc: "newest first", cmp: (a, b) => a.date.localeCompare(b.date) || ((a.createdAt || 0) - (b.createdAt || 0)) },
+    desc: { label: "description", def: "asc", asc: "A to Z", desc: "Z to A", cmp: byText("desc") },
+    category: { label: "category", def: "asc", asc: "A to Z", desc: "Z to A", cmp: byText("category") },
+    payment: { label: "payment mode", def: "asc", asc: "A to Z", desc: "Z to A", cmp: byText("payment") },
+    amount: { label: "amount", def: "desc", asc: "lowest first", desc: "highest first", cmp: (a, b) => (Number(a.amount) || 0) - (Number(b.amount) || 0) },
+  };
+  let sort = { key: "date", dir: "desc" };
+  try { const s = JSON.parse(localStorage.getItem("sort") || "null"); if (s && SORTS[s.key] && (s.dir === "asc" || s.dir === "desc")) sort = s; } catch (e) {}
+  let catFilter = null;   // category picked from the chart
+  let query = "";         // search text
+  let hoverCat = null;    // category under the pointer in the chart
+  let flashId = null;     // row to highlight after add / edit
+
+  function sortItems(items) {
+    const s = SORTS[sort.key], m = sort.dir === "asc" ? 1 : -1;
+    return items.slice().sort((a, b) => {
+      if (sort.key === "payment" && !a.payment !== !b.payment) return a.payment ? -1 : 1; // unset always last
+      return m * s.cmp(a, b) || (sort.key !== "date" ? -SORTS.date.cmp(a, b) : 0);
+    });
+  }
+  $("thead").addEventListener("click", (ev) => {
+    const th = ev.target.closest("th[data-sort]");
+    if (!th) return;
+    const key = th.dataset.sort;
+    sort = sort.key === key ? { key, dir: sort.dir === "asc" ? "desc" : "asc" } : { key, dir: SORTS[key].def };
+    try { localStorage.setItem("sort", JSON.stringify(sort)); } catch (e) {}
+    render();
+  });
+  $("q").addEventListener("input", () => { query = $("q").value.trim().toLowerCase(); render(); });
+  $("catChip").addEventListener("click", () => { catFilter = null; render(); });
+
   let cur = "€";
   try { cur = localStorage.getItem("cur") || "€"; } catch (e) {}
   $("cur").value = cur;
@@ -347,6 +469,7 @@ tr.editing td { background: var(--accent-soft); }
   $("fDate").value = todayISO;
   $("prev").addEventListener("click", () => { month = shift(month, -1); render(); });
   $("next").addEventListener("click", () => { month = shift(month, 1); render(); });
+  $("todayBtn").addEventListener("click", () => { month = todayISO.slice(0, 7); render(); $("prev").focus({ preventScroll: true }); });
 
   function msg(text, err) { const m = $("formMsg"); m.textContent = text; m.classList.toggle("err", !!err); }
 
@@ -533,10 +656,12 @@ tr.editing td { background: var(--accent-soft); }
       if (id) {
         await db.doc("expenses/" + id).update({ ...fields, ...receiptField, updatedAt: Date.now() });
         if (oldReceipt && (newReceipt || dropExisting)) receipts.remove(oldReceipt);
+        flashId = id;
         endEdit();
         msg(`Updated ${desc}: ${money(amount)} on ${fmtLong(date)}.`);
       } else {
-        await db.collection("expenses").add({ ...fields, ...receiptField, createdAt: Date.now() });
+        const ref = await db.collection("expenses").add({ ...fields, ...receiptField, createdAt: Date.now() });
+        if (ref && ref.id) { flashId = ref.id; render(); }
         msg(`Added ${money(amount)} for ${desc}${newReceipt ? " with its bill attached" : ""}.`);
         $("fDesc").value = ""; $("fAmt").value = ""; $("fDesc").focus();
         pendingFile = null; fileState();
@@ -577,41 +702,99 @@ tr.editing td { background: var(--accent-soft); }
     btn.disabled = false; btn.dataset.arm = ""; btn.textContent = "Remove example entries";
   });
 
+  let donutGroups = [], donutTotal = 0;
   function renderDonut(groups, total) {
+    donutGroups = groups; donutTotal = total;
     const svg = $("donut");
-    const R = 80, r = 54, cx = 90, cy = 90;
+    const R = 78, r = 52, cx = 90, cy = 90, POP = 7;
     let html = `<circle cx="${cx}" cy="${cy}" r="${(R + r) / 2}" fill="none" stroke="var(--line)" stroke-width="${R - r}"></circle>`;
     if (total > 0) {
       let a0 = -Math.PI / 2;
-      groups.forEach((g) => {
+      groups.forEach((g, i) => {
         const frac = g.total / total;
         const a1 = a0 + frac * Math.PI * 2;
         if (frac >= 0.9999) {
-          html += `<circle cx="${cx}" cy="${cy}" r="${(R + r) / 2}" fill="none" stroke="${color(g.cat)}" stroke-width="${R - r}"></circle>`;
+          html += `<circle class="seg" data-i="${i}" cx="${cx}" cy="${cy}" r="${(R + r) / 2}" fill="none" stroke="${color(g.cat)}" stroke-width="${R - r}"></circle>`;
         } else {
           const gap = groups.length > 1 ? 0.012 : 0;
           const s = a0 + gap, e = a1 - gap;
           const large = e - s > Math.PI ? 1 : 0;
+          const mid = (a0 + a1) / 2;
           const p = (rad, a) => `${(cx + rad * Math.cos(a)).toFixed(2)} ${(cy + rad * Math.sin(a)).toFixed(2)}`;
-          html += `<path fill="${color(g.cat)}" d="M ${p(R, s)} A ${R} ${R} 0 ${large} 1 ${p(R, e)} L ${p(r, e)} A ${r} ${r} 0 ${large} 0 ${p(r, s)} Z"><title></title></path>`;
+          html += `<path class="seg" data-i="${i}" style="--dx:${(Math.cos(mid) * POP).toFixed(2)}px;--dy:${(Math.sin(mid) * POP).toFixed(2)}px" fill="${color(g.cat)}" d="M ${p(R, s)} A ${R} ${R} 0 ${large} 1 ${p(R, e)} L ${p(r, e)} A ${r} ${r} 0 ${large} 0 ${p(r, s)} Z"></path>`;
         }
         a0 = a1;
       });
     }
-    html += `<text x="${cx}" y="${cy - 4}" text-anchor="middle" font-size="11" style="fill:var(--muted);font-family:var(--font-ui)">TOTAL</text>`;
-    html += `<text x="${cx}" y="${cy + 15}" text-anchor="middle" font-size="${total >= 100000 ? 13 : 16}" font-weight="500" style="font-family:var(--font-num)"></text>`;
+    html += `<text class="clabel" x="${cx}" y="${cy - 10}" text-anchor="middle"></text>`;
+    html += `<text class="camt" x="${cx}" y="${cy + 8}" text-anchor="middle"></text>`;
+    html += `<text class="csub" x="${cx}" y="${cy + 24}" text-anchor="middle"></text>`;
     svg.innerHTML = html;
-    const texts = svg.querySelectorAll("text");
-    texts[1].textContent = total > 0 ? money(total, 0) : "—";
-    svg.querySelectorAll("path title").forEach((t, i) => { t.textContent = `${groups[i].cat}: ${money(groups[i].total)}`; });
+    applyHover();
   }
+
+  // Highlights the hovered (or filtered) category in the chart and legend, and shows its figures in the centre.
+  function applyHover() {
+    const svg = $("donut"), ul = $("legend");
+    const focusCat = hoverCat || catFilter;
+    const idx = donutGroups.findIndex((g) => g.cat === focusCat);
+    svg.classList.toggle("hl", idx >= 0);
+    ul.classList.toggle("hl", !!hoverCat && idx >= 0);
+    svg.querySelectorAll(".seg").forEach((el) => {
+      const i = Number(el.dataset.i);
+      el.classList.toggle("on", i === idx);
+      el.classList.toggle("sel", donutGroups[i] && donutGroups[i].cat === catFilter);
+    });
+    ul.querySelectorAll("li[data-cat]").forEach((li) => {
+      li.classList.toggle("on", li.dataset.cat === hoverCat);
+      li.classList.toggle("sel", li.dataset.cat === catFilter);
+      li.setAttribute("aria-pressed", String(li.dataset.cat === catFilter));
+    });
+    const [lab, amt, sub] = svg.querySelectorAll("text");
+    const short = (s) => s.length > 15 ? s.slice(0, 14) + "…" : s;
+    if (idx >= 0) {
+      const g = donutGroups[idx];
+      lab.textContent = short(g.cat).toUpperCase();
+      amt.textContent = money(g.total, 0);
+      sub.textContent = (g.total / donutTotal * 100).toFixed(1) + "% of month";
+    } else {
+      lab.textContent = "TOTAL";
+      amt.textContent = donutTotal > 0 ? money(donutTotal, 0) : "—";
+      sub.textContent = donutGroups.length ? `${donutGroups.length} ${donutGroups.length === 1 ? "category" : "categories"}` : "";
+    }
+    const big = (amt.textContent || "").length > 9;
+    amt.setAttribute("font-size", big ? "13" : "16");
+  }
+
+  function setHover(cat) { if (hoverCat !== cat) { hoverCat = cat; applyHover(); } }
+  function toggleFilter(cat) {
+    catFilter = catFilter === cat ? null : cat;
+    render();
+  }
+  $("donut").addEventListener("pointerover", (ev) => { const s = ev.target.closest(".seg"); if (s) setHover(donutGroups[Number(s.dataset.i)].cat); });
+  $("donut").addEventListener("pointerleave", () => setHover(null));
+  $("donut").addEventListener("click", (ev) => { const s = ev.target.closest(".seg"); if (s) toggleFilter(donutGroups[Number(s.dataset.i)].cat); });
+  $("legend").addEventListener("pointerover", (ev) => { const li = ev.target.closest("li[data-cat]"); setHover(li ? li.dataset.cat : null); });
+  $("legend").addEventListener("pointerleave", () => setHover(null));
+  $("legend").addEventListener("focusin", (ev) => { const li = ev.target.closest("li[data-cat]"); if (li) setHover(li.dataset.cat); });
+  $("legend").addEventListener("focusout", () => setHover(null));
+  $("legend").addEventListener("click", (ev) => { const li = ev.target.closest("li[data-cat]"); if (li) toggleFilter(li.dataset.cat); });
+  $("legend").addEventListener("keydown", (ev) => {
+    const li = ev.target.closest("li[data-cat]");
+    if (li && (ev.key === "Enter" || ev.key === " ")) { ev.preventDefault(); toggleFilter(li.dataset.cat); }
+  });
 
   function renderLegend(groups, total) {
     const ul = $("legend");
+    const refocus = document.activeElement && document.activeElement.closest && document.activeElement.closest("#legend li[data-cat]");
+    const refocusCat = refocus ? refocus.dataset.cat : null;
     ul.replaceChildren();
-    if (!groups.length) { const li = document.createElement("li"); li.style.display = "block"; li.style.color = "var(--muted)"; li.textContent = "Nothing recorded this month."; ul.append(li); return; }
+    $("bdHint").hidden = !groups.length;
+    if (!groups.length) { const li = document.createElement("li"); li.className = "empty-l"; li.style.display = "block"; li.style.color = "var(--muted)"; li.textContent = "Nothing recorded this month."; ul.append(li); return; }
     groups.forEach((g) => {
       const li = document.createElement("li");
+      li.dataset.cat = g.cat; li.tabIndex = 0; li.setAttribute("role", "button");
+      li.setAttribute("aria-label", `${g.cat}: ${money(g.total)}, ${(g.total / total * 100).toFixed(1)}%. Show only these line items`);
       const sw = document.createElement("span"); sw.className = "sw"; sw.style.background = color(g.cat);
       const nm = document.createElement("span"); nm.className = "name"; nm.textContent = g.cat;
       const v = document.createElement("span"); v.className = "num"; v.textContent = money(g.total);
@@ -620,6 +803,7 @@ tr.editing td { background: var(--accent-soft); }
       li.append(sw, nm, v, pc, bar);
       ul.append(li);
     });
+    if (refocusCat) { const again = ul.querySelector(`li[data-cat="${CSS.escape(refocusCat)}"]`); if (again) again.focus({ preventScroll: true }); }
   }
 
   function renderTrend() {
@@ -636,30 +820,51 @@ tr.editing td { background: var(--accent-soft); }
       const h = totals[i] / max * ih;
       const x = left + band * i + (band - bw) / 2;
       const sel = m === month;
-      if (totals[i] > 0) html += `<rect x="${x.toFixed(1)}" y="${(H - bottom - h).toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="5" fill="${sel ? "var(--accent)" : "var(--line)"}"></rect>`;
+      html += `<g class="tm" data-m="${m}" tabindex="0" role="button"><rect class="hit" x="${(left + band * i + 2).toFixed(1)}" y="2" width="${(band - 4).toFixed(1)}" height="${H - 4}" rx="6"></rect>`;
+      if (totals[i] > 0) html += `<rect class="b${sel ? " cur" : ""}" x="${x.toFixed(1)}" y="${(H - bottom - h).toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="5" fill="${sel ? "var(--accent)" : "var(--line)"}"></rect>`;
       html += `<text class="val" x="${(x + bw / 2).toFixed(1)}" y="${(H - bottom - h - 6).toFixed(1)}" text-anchor="middle"></text>`;
-      html += `<text x="${(x + bw / 2).toFixed(1)}" y="${H - 9}" text-anchor="middle" ${sel ? 'style="fill:var(--ink);font-weight:600"' : ""}></text>`;
+      html += `<text class="lab" x="${(x + bw / 2).toFixed(1)}" y="${H - 9}" text-anchor="middle" ${sel ? 'style="fill:var(--ink);font-weight:600"' : ""}></text></g>`;
     });
     svg.innerHTML = html;
-    const vals = svg.querySelectorAll("text.val");
-    const labs = svg.querySelectorAll("text:not(.val)");
-    months.forEach((m, i) => {
-      vals[i].textContent = totals[i] > 0 ? (totals[i] >= 10000 ? cur + Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(totals[i]) : money(totals[i], 0)) : "";
-      labs[i].textContent = shortMonth(m);
+    svg.querySelectorAll("g.tm").forEach((g, i) => {
+      const m = months[i];
+      g.querySelector("text.val").textContent = totals[i] > 0 ? (totals[i] >= 10000 ? cur + Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(totals[i]) : money(totals[i], 0)) : "";
+      g.querySelector("text.lab").textContent = shortMonth(m);
+      g.setAttribute("aria-label", `${monthName(m)}: ${money(totals[i])}. Open this month`);
     });
   }
+  const openTrendMonth = (ev) => { const g = ev.target.closest("g.tm"); if (g && g.dataset.m !== month) { month = g.dataset.m; render(); } };
+  $("trend").addEventListener("click", openTrendMonth);
+  $("trend").addEventListener("keydown", (ev) => {
+    if (ev.key !== "Enter" && ev.key !== " ") return;
+    ev.preventDefault(); openTrendMonth(ev);
+    const g = $("trend").querySelector(`g.tm[data-m="${month}"]`); if (g) g.focus({ preventScroll: true });
+  });
 
-  function renderTable(items) {
+  function renderTable(items, monthCount) {
     const tb = $("rows");
     tb.replaceChildren();
+    // sort indicators
+    document.querySelectorAll("#thead th[data-sort]").forEach((th) => {
+      th.setAttribute("aria-sort", th.dataset.sort === sort.key ? (sort.dir === "asc" ? "ascending" : "descending") : "none");
+      const b = th.querySelector("button");
+      const s = SORTS[th.dataset.sort];
+      const nextDir = th.dataset.sort === sort.key ? (sort.dir === "asc" ? "desc" : "asc") : s.def;
+      b.title = `Sort by ${s.label}, ${s[nextDir]}`;
+    });
     if (!items.length) {
       const tr = document.createElement("tr"); const td = document.createElement("td"); td.colSpan = 6; td.className = "empty";
-      td.textContent = loaded ? `No expenses in ${monthName(month)} yet. Add one above.` : "Loading…";
+      td.textContent = !loaded ? "Loading…"
+        : monthCount && (query || catFilter) ? "No expenses match. Clear the search or category filter to see everything."
+        : `No expenses in ${monthName(month)} yet. Add one above.`;
       tr.append(td); tb.append(tr); return;
     }
+    const flash = flashId;
+    if (flash) setTimeout(() => { if (flashId === flash) flashId = null; }, 1900);
     items.forEach((e) => {
       const tr = document.createElement("tr");
       if (e.id === editing) tr.className = "editing";
+      else if (e.id === flash) tr.className = "flash";
       const d = document.createElement("td"); d.className = "num"; d.style.whiteSpace = "nowrap";
       const dt = parseISO(e.date);
       const wd = document.createElement("span"); wd.className = "daytag"; wd.textContent = dt.toLocaleString("en", { weekday: "short" }) + ", ";
@@ -669,7 +874,7 @@ tr.editing td { background: var(--accent-soft); }
       const c = document.createElement("td"); const chip = document.createElement("span"); chip.className = "chip"; const sw = document.createElement("span"); sw.className = "sw"; sw.style.background = color(e.category); chip.append(sw, document.createTextNode(e.category)); c.append(chip);
       const pv = document.createElement("td"); pv.style.whiteSpace = "nowrap";
       if (e.payment) pv.textContent = e.payment; else { pv.textContent = "—"; pv.style.color = "var(--muted)"; }
-      const a = document.createElement("td"); a.className = "r num"; a.textContent = money(e.amount);
+      const a = document.createElement("td"); a.className = "r num amt-cell"; a.textContent = money(e.amount);
       const x = document.createElement("td"); x.className = "r"; x.style.whiteSpace = "nowrap";
       const wrap = document.createElement("span"); wrap.className = "rowact";
       if (e.receipt) {
@@ -723,8 +928,25 @@ tr.editing td { background: var(--accent-soft); }
 
     renderDonut(groups, total);
     renderLegend(groups, total);
+    applyHover();
     renderTrend();
-    renderTable(items);
+
+    // line items: category filter, search, sort
+    let view = items;
+    if (catFilter) view = view.filter((e) => e.category === catFilter);
+    if (query) view = view.filter((e) => [e.desc, e.category, e.payment, Number(e.amount).toFixed(2), fmtLong(e.date)].some((v) => txt(v).toLowerCase().includes(query)));
+    view = sortItems(view);
+    renderTable(view, items.length);
+    $("catChip").hidden = !catFilter;
+    if (catFilter) { $("catChipTxt").textContent = catFilter; $("catChipSw").style.background = color(catFilter); }
+    const tsum = $("tSum");
+    tsum.replaceChildren();
+    if (loaded && items.length) {
+      const filtered = view.length !== items.length;
+      const b = document.createElement("b"); b.textContent = money(sum(view));
+      tsum.append(document.createTextNode(filtered ? `${view.length} of ${items.length} shown · ` : `${items.length} ${items.length === 1 ? "entry" : "entries"} · `), b);
+    }
+    $("todayBtn").hidden = month === todayISO.slice(0, 7);
     $("clearEx").hidden = !all.some((e) => e.example);
     $("expPdf").disabled = $("expXlsx").disabled = !all.length || exporting;
   }
